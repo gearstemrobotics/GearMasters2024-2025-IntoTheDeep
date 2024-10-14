@@ -11,7 +11,7 @@ public class HelloMotor extends OpMode {
     @Override
     public void init()
     {
-        rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
+        rightMotor = hardwareMap.get(DcMotor.class, "FrontRight");
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -27,6 +27,6 @@ public class HelloMotor extends OpMode {
             power = -gamepad1.right_trigger;
         }
         rightMotor.setPower(power);
-        telemetry.addData("power", power);
+        telemetry.addData("power1", power);
     }
 }
