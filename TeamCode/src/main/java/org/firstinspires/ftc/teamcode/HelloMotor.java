@@ -13,15 +13,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp()
 public class HelloMotor extends OpMode {
 
-    private DcMotor rightMotor;
+    private DcMotor Arm;
     private ColorSensor color;
     private DistanceSensor distance;
     private TouchSensor touchSen;
     @Override
     public void init()
     {
-        rightMotor = hardwareMap.get(DcMotor.class, "FrontRight");
-        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Arm = hardwareMap.get(DcMotor.class, "Arm");
+        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         touchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
         color = hardwareMap.get(ColorSensor.class, "Color");
         distance =  hardwareMap.get(DistanceSensor.class, "distance");
@@ -42,7 +42,7 @@ public class HelloMotor extends OpMode {
         {
             power = 0;
         }
-        rightMotor.setPower(power);
+        Arm.setPower(power);
         telemetry.addData("power1", power);
         telemetry.addData("Touched", touchSen.getValue());
         telemetry.addData("Red", color.red());
