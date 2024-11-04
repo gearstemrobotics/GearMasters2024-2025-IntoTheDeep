@@ -31,6 +31,7 @@ public class DeepDrive extends LinearOpMode {
     //private CRServo thingy351;
     private DcMotor Arm;
     private DcMotor Arm2;
+    private DcMotor Arm3;
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -44,7 +45,8 @@ public class DeepDrive extends LinearOpMode {
         float horizontal;
         float pivot;
         float power2 = 0;
-        float power = 0;
+        float power;
+        float power3;
 
 
         BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
@@ -53,13 +55,14 @@ public class DeepDrive extends LinearOpMode {
         BackRight = hardwareMap.get(DcMotor.class, "BackRight");
         Arm = hardwareMap.get(DcMotor.class, "Arm");
         Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
+        Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
         TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
         color = hardwareMap.get(ColorSensor.class, "Color");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
        // BackLeft.setDirection(DcMotor.Direction.REVERSE);
-       FrontRight.setDirection(DcMotor.Direction.REVERSE);
-        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+      // FrontRight.setDirection(DcMotor.Direction.REVERSE);
+       // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
 
 
 
@@ -67,27 +70,7 @@ public class DeepDrive extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                gamepad1.rumble(10000);
 
-                if (gamepad1.left_trigger > 0) // if left trigger > 0
-                {
-                    power = gamepad1.left_trigger;
-                    gamepad1.rumble(10000);
-                }
-                else // check rtrigger
-                {
-                    power = -gamepad1.right_trigger;
-                    gamepad1.rumble(10000);
-                }
-                //if (touchSen.isPressed())
-               // {
-                 //   power = 0;
-               // }
-
-
-
-
-               Arm.setPower(power);
 
                 if (gamepad2.left_trigger > 0) // if left trigger > 0
                 {
@@ -99,15 +82,33 @@ public class DeepDrive extends LinearOpMode {
                     power2 = -gamepad2.right_trigger;
                     gamepad2.rumble(100);
                 }
-                if (TouchSen.isPressed())
-                {
-                    power2 = 0;
-                }
                Arm2.setPower(power2);
 
-                vertical = -gamepad1.left_stick_y;
-                horizontal = gamepad1.left_stick_x;
-                pivot = gamepad1.right_stick_x;
+
+
+
+
+                //extra arm
+                power = gamepad2.right_stick_y;
+                Arm.setPower(power);
+
+                //lift arm
+                if (TouchSen.isPressed())
+                {
+                    power = 0;
+                }
+                else
+                {
+                    power = gamepad2.left_stick_y;
+                }
+                Arm.setPower(power);
+
+                power3 = gamepad2.right_stick_y;
+                Arm3.setPower(power3);
+
+                vertical = -gamepad1.right_stick_x;
+                horizontal = -gamepad1.left_stick_x;
+                pivot = gamepad1.left_stick_y;
                 FrontRight.setPower((-pivot + (vertical - horizontal)) * 0.8);
                 BackRight.setPower((-pivot + vertical + horizontal) * 0.8);
                 FrontLeft.setPower((pivot + vertical + horizontal) * 0.8);
