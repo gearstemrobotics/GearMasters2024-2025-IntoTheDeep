@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode;
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -12,9 +16,15 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.LED;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+
 
 @TeleOp(name = "DeepDrive (Blocks to Java)")
 public class DeepDrive extends LinearOpMode {
+
+
+  //  RevBlinkinLedDriver blinkinLedDriver;
 
     private TouchSensor TouchSen;
     private ColorSensor color;
@@ -38,6 +48,9 @@ public class DeepDrive extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
+
+        //blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+
         int hex_motor_ticks;
         int Right_Arm;
         int Left_Arm;
@@ -47,6 +60,7 @@ public class DeepDrive extends LinearOpMode {
         float power2 = 0;
         float power;
         float power3;
+        int Red;
 
 
         BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
@@ -71,6 +85,8 @@ public class DeepDrive extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
+                Red = color.red();
+
 
                 if (gamepad2.left_trigger > 0) // if left trigger > 0
                 {
@@ -87,10 +103,21 @@ public class DeepDrive extends LinearOpMode {
 
 
 
+                if (Red > 500)
+                {
+                   // blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                    telemetry.addData("red see", Red);
+                }
+
+
+
+
+
+
 
                 //extra arm
-                power = gamepad2.right_stick_y;
-                Arm.setPower(power);
+               // power = gamepad2.right_stick_y;
+               // Arm.setPower(power);
 
                 //lift arm
                 if (TouchSen.isPressed())
@@ -106,8 +133,8 @@ public class DeepDrive extends LinearOpMode {
                 power3 = gamepad2.right_stick_y;
                 Arm3.setPower(power3);
 
-                vertical = -gamepad1.right_stick_x;
-                horizontal = -gamepad1.left_stick_x;
+                vertical = gamepad1.right_stick_x;
+                horizontal = gamepad1.left_stick_x;
                 pivot = gamepad1.left_stick_y;
                 FrontRight.setPower((-pivot + (vertical - horizontal)) * 0.8);
                 BackRight.setPower((-pivot + vertical + horizontal) * 0.8);
