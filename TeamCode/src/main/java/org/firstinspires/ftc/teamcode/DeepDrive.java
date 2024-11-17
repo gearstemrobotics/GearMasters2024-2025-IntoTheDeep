@@ -24,7 +24,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 public class DeepDrive extends LinearOpMode {
 
 
-  //  RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver blinkinLedDriver;
 
     private TouchSensor TouchSen;
     private ColorSensor color;
@@ -32,13 +32,9 @@ public class DeepDrive extends LinearOpMode {
     private DcMotor BackLeft;
    private DcMotor FrontRight;
     private DcMotor FrontLeft;
-    //private DcMotor rightarm;
-    //private CRServo thingy1066;
-    //private Servo plane;
+
     private DcMotor BackRight;
-    //private DcMotor leftarm;
-    //private DcMotor intake;
-    //private CRServo thingy351;
+
     private DcMotor Arm;
     private DcMotor Arm2;
     private DcMotor Arm3;
@@ -49,7 +45,7 @@ public class DeepDrive extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
         int hex_motor_ticks;
         int Right_Arm;
@@ -105,7 +101,7 @@ public class DeepDrive extends LinearOpMode {
 
                 if (Red > 500)
                 {
-                   // blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                     telemetry.addData("red see", Red);
                 }
 

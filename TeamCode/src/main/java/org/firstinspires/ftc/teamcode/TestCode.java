@@ -21,11 +21,11 @@ public class TestCode extends LinearOpMode {
     private ColorSensor Color;
     private ColorSensor Color2;
     private TouchSensor TouchSen;
-    private DcMotor Arm;
+   // private DcMotor Arm;
     @Override
     public void runOpMode() {
         float power;
-        Arm = hardwareMap.get(DcMotor.class, "Arm");
+       // Arm = hardwareMap.get(DcMotor.class, "Arm");
         TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
         Color = hardwareMap.get(ColorSensor.class, "Color");
         Color2 = hardwareMap.get(ColorSensor.class, "Color2");
@@ -41,7 +41,7 @@ public class TestCode extends LinearOpMode {
                 {
                     power = gamepad2.left_stick_y;
                 }
-                Arm.setPower(power);
+              // Arm.setPower(power);
 
                 telemetry.addData("Red", Color.red());
                 telemetry.addData("Green", Color.green());
