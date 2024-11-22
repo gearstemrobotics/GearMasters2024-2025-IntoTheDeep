@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,7 +22,7 @@ import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 
-@TeleOp(name = "DeepDrive (Blocks to Java)")
+@TeleOp(name = "DeepDrive")
 public class DeepDrive extends LinearOpMode {
 
 
@@ -30,7 +32,7 @@ public class DeepDrive extends LinearOpMode {
     private ColorSensor color;
 
     private DcMotor BackLeft;
-   private DcMotor FrontRight;
+    private DcMotor FrontRight;
     private DcMotor FrontLeft;
 
     private DcMotor BackRight;
@@ -45,11 +47,96 @@ public class DeepDrive extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        //DoWork();
+        DoWork2();
+    }
+
+    public void DoWork2() {
+        BackGroundMech task = new BackGroundMech(gamepad1,
+                hardwareMap.get(DcMotor.class, "FrontRight"),
+                hardwareMap.get(DcMotor.class, "FrontLeft"),
+                hardwareMap.get(DcMotor.class, "BackRight"),
+                hardwareMap.get(DcMotor.class, "BackLeft"));
+        Thread t1 = new Thread(task, "t1");
+
+
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
+
+        float power2 = 0;
+        float power;
+        float power3;
+        int Red;
+        boolean pressed = true;
+
+       // Arm = hardwareMap.get(DcMotor.class, "Arm");
+       // Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
+       // Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
+        TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
+        color = hardwareMap.get(ColorSensor.class, "Color");
+
+
+        waitForStart();
+        t1.start();  //make sure to start thread
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
+
+                Red = color.red();
+
+
+
+                if (gamepad2.left_trigger > 0) // if left trigger > 0
+                {
+                    power2 = gamepad2.left_trigger;
+                    gamepad2.rumble(100);
+                } else // check rtrigger
+                {
+                    power2 = -gamepad2.right_trigger;
+                    gamepad2.rumble(100);
+                }
+                Arm2.setPower(power2);
+
+
+                if (Red > 500) {
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                    telemetry.addData("red see", Red);
+                }
+
+
+               // if (gamepad2.b == pressed) {}
+
+
+                //extra arm
+                // power = gamepad2.right_stick_y;
+                // Arm.setPower(power);
+
+                //lift arm
+                if (TouchSen.isPressed()) {
+                    power = 0;
+                } else {
+                    power = gamepad2.left_stick_y;
+                }
+                Arm.setPower(power);
+
+                power3 = gamepad2.right_stick_y;
+                Arm3.setPower(power3);
+
+                telemetry.addData("power1", power);
+                telemetry.addData("Touched", TouchSen.getValue());
+                telemetry.addData("Red", color.red());
+                telemetry.addData("Green", color.green());
+                telemetry.addData("Blue", color.blue());
+                telemetry.update();
+
+
+            }
+        }
+
+    }
+
+    public void DoWork() {
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
         int hex_motor_ticks;
-        int Right_Arm;
-        int Left_Arm;
         float vertical;
         float horizontal;
         float pivot;
@@ -57,6 +144,7 @@ public class DeepDrive extends LinearOpMode {
         float power;
         float power3;
         int Red;
+        boolean pressed = true;
 
 
         BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
@@ -70,11 +158,9 @@ public class DeepDrive extends LinearOpMode {
         color = hardwareMap.get(ColorSensor.class, "Color");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
-       // BackLeft.setDirection(DcMotor.Direction.REVERSE);
-      // FrontRight.setDirection(DcMotor.Direction.REVERSE);
-       // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
-
-
+        // BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        // FrontRight.setDirection(DcMotor.Direction.REVERSE);
+        // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
 
 
         waitForStart();
@@ -88,40 +174,33 @@ public class DeepDrive extends LinearOpMode {
                 {
                     power2 = gamepad2.left_trigger;
                     gamepad2.rumble(100);
-                }
-                else // check rtrigger
+                } else // check rtrigger
                 {
                     power2 = -gamepad2.right_trigger;
                     gamepad2.rumble(100);
                 }
-               Arm2.setPower(power2);
+                Arm2.setPower(power2);
 
 
-
-
-                if (Red > 500)
-                {
+                if (Red > 500) {
                     blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                     telemetry.addData("red see", Red);
                 }
 
 
+                if (gamepad2.b = pressed) {
 
-
-
+                }
 
 
                 //extra arm
-               // power = gamepad2.right_stick_y;
-               // Arm.setPower(power);
+                // power = gamepad2.right_stick_y;
+                // Arm.setPower(power);
 
                 //lift arm
-                if (TouchSen.isPressed())
-                {
+                if (TouchSen.isPressed()) {
                     power = 0;
-                }
-                else
-                {
+                } else {
                     power = gamepad2.left_stick_y;
                 }
                 Arm.setPower(power);
