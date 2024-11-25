@@ -1,24 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 
@@ -39,9 +28,9 @@ public class DeepDrive extends LinearOpMode {
 
     private DcMotor BackRight;
 
-    private DcMotor Arm;
-    private DcMotor Arm2;
-    private DcMotor Arm3;
+    private DcMotor extendArm;
+    private DcMotor liftArm;
+    private DcMotor angleArm;
 
     private boolean useExpanasionHub = false;
 
@@ -75,9 +64,9 @@ public class DeepDrive extends LinearOpMode {
         boolean pressed = true;
 
         if (useExpanasionHub) {
-            Arm3 = hardwareMap.get(DcMotor.class, "Arm");
-            Arm = hardwareMap.get(DcMotor.class, "Arm2");
-            Arm2 = hardwareMap.get(DcMotor.class, "Arm3");
+            extendArm = hardwareMap.get(DcMotor.class, "extendArm");
+            liftArm = hardwareMap.get(DcMotor.class, "liftArm");
+            angleArm = hardwareMap.get(DcMotor.class, "angleArm");
         }
 
         TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
@@ -110,7 +99,7 @@ public class DeepDrive extends LinearOpMode {
                 }
 
                 if (useExpanasionHub) {
-                    Arm2.setPower(power2);
+                    liftArm.setPower(power2);
                 }
 
                 // true red
@@ -156,7 +145,7 @@ public class DeepDrive extends LinearOpMode {
                 power = 0;
                 power = gamepad2.right_stick_y;
                 if (useExpanasionHub) {
-                    Arm.setPower(power);
+                    extendArm.setPower(power);
                 }
 
                 //lift arm
@@ -167,13 +156,13 @@ public class DeepDrive extends LinearOpMode {
                 }
 
                 if (useExpanasionHub) {
-                    Arm.setPower(power);
+                    extendArm.setPower(power);
                 }
 
                 power3 = 0;
                 power3 = gamepad2.left_stick_y;
                 if (useExpanasionHub) {
-                    Arm3.setPower(power3);
+                    angleArm.setPower(power3);
                 }
 
                 double open = 1;
