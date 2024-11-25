@@ -27,6 +27,8 @@ public class DeepDrive extends LinearOpMode {
 
 
     RevBlinkinLedDriver blinkinLedDriver;
+    private Servo gripper;
+    private CRServo gripper2;
 
     private TouchSensor TouchSen;
     private ColorSensor color;
@@ -40,6 +42,9 @@ public class DeepDrive extends LinearOpMode {
     private DcMotor Arm;
     private DcMotor Arm2;
     private DcMotor Arm3;
+
+    private boolean useExpanasionHub = false;
+
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -63,16 +68,25 @@ public class DeepDrive extends LinearOpMode {
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
 
         float power2 = 0;
-        float power;
-        float power3;
+        float power = 0;
+        float power3 = 0;
         int Red;
+        int Blue;
         boolean pressed = true;
 
-       // Arm = hardwareMap.get(DcMotor.class, "Arm");
-       // Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
-       // Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
+        if (useExpanasionHub) {
+            Arm3 = hardwareMap.get(DcMotor.class, "Arm");
+            Arm = hardwareMap.get(DcMotor.class, "Arm2");
+            Arm2 = hardwareMap.get(DcMotor.class, "Arm3");
+        }
+
         TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
         color = hardwareMap.get(ColorSensor.class, "Color");
+        gripper = hardwareMap.get(Servo.class, "gripper");
+        gripper2 = hardwareMap.get(CRServo.class, "gripper2");
+        color = hardwareMap.get(ColorSensor.class, "Color");
+        gripper.resetDeviceConfigurationForOpMode();
+        gripper2.resetDeviceConfigurationForOpMode();
 
 
         waitForStart();
@@ -80,8 +94,9 @@ public class DeepDrive extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                Red = color.red();
 
+                Red = color.red();
+                Blue = color.blue();
 
 
                 if (gamepad2.left_trigger > 0) // if left trigger > 0
@@ -93,21 +108,56 @@ public class DeepDrive extends LinearOpMode {
                     power2 = -gamepad2.right_trigger;
                     gamepad2.rumble(100);
                 }
-                Arm2.setPower(power2);
 
+                if (useExpanasionHub) {
+                    Arm2.setPower(power2);
+                }
 
+                // true red
                 if (Red > 500) {
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                    telemetry.addData("red see", Red);
+
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                }
+
+                // less red
+                if (Red > 250) {
+
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
                 }
 
 
-               // if (gamepad2.b == pressed) {}
+                // true blue
+                if (Blue > 500) {
+
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                }
+
+
+                // less blue
+                if (Blue > 250) {
+
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
+                }
+
+                // less yellow
+                if (Red > 250) {
+
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                }
+
+                // true yellow
+                if (Red > 250) {
+
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                }
 
 
                 //extra arm
-                // power = gamepad2.right_stick_y;
-                // Arm.setPower(power);
+                power = 0;
+                power = gamepad2.right_stick_y;
+                if (useExpanasionHub) {
+                    Arm.setPower(power);
+                }
 
                 //lift arm
                 if (TouchSen.isPressed()) {
@@ -115,12 +165,34 @@ public class DeepDrive extends LinearOpMode {
                 } else {
                     power = gamepad2.left_stick_y;
                 }
-                Arm.setPower(power);
 
-                power3 = gamepad2.right_stick_y;
-                Arm3.setPower(power3);
+                if (useExpanasionHub) {
+                    Arm.setPower(power);
+                }
 
-                telemetry.addData("power1", power);
+                power3 = 0;
+                power3 = gamepad2.left_stick_y;
+                if (useExpanasionHub) {
+                    Arm3.setPower(power3);
+                }
+
+                double open = 1;
+                //Servo
+                if (gamepad2.a) {
+                    gripper.setPosition(open);
+                    gripper2.setPower(open);
+                }
+
+                double close = 0;
+
+                if (gamepad2.b) {
+                    gripper.setPosition(close);
+                    gripper2.setPower(close);
+                }
+
+                telemetry.addData("power", power);
+                telemetry.addData("power2", power2);
+                telemetry.addData("power3", power3);
                 telemetry.addData("Touched", TouchSen.getValue());
                 telemetry.addData("Red", color.red());
                 telemetry.addData("Green", color.green());
@@ -132,7 +204,11 @@ public class DeepDrive extends LinearOpMode {
         }
 
     }
-
+}
+//*********************************************
+//  W A R N I N G   O U T D A T E D   D R I V E
+//*********************************************
+/*
     public void DoWork() {
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
@@ -224,7 +300,10 @@ public class DeepDrive extends LinearOpMode {
                 telemetry.update();
 
 
+
             }
         }
     }
 }
+
+ */

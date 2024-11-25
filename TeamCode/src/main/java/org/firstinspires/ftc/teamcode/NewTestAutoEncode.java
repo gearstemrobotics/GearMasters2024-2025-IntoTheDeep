@@ -85,10 +85,11 @@ public class NewTestAutoEncode extends LinearOpMode {
         FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
         FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
         BackRight = hardwareMap.get(DcMotor.class, "BackRight");
-        Arm = hardwareMap.get(DcMotor.class, "Arm");
-        Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
-        Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
+      //  Arm = hardwareMap.get(DcMotor.class, "Arm");
+       // Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
+       // Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
         blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        BackRight.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
         if (opModeIsActive()) {
@@ -104,6 +105,8 @@ public class NewTestAutoEncode extends LinearOpMode {
             FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
+            double mult = 4;
+
             while (opModeIsActive()) {
 
 
@@ -114,7 +117,8 @@ public class NewTestAutoEncode extends LinearOpMode {
                 FrontLeftPos = 0;
                 BackLeftPos = 0;
                 sleep(500);
-                drive(hex_motor_ticks * 6, hex_motor_ticks * 6, hex_motor_ticks * 6, hex_motor_ticks * 6, 0.5);
+                drive(hex_motor_ticks * mult, - hex_motor_ticks * mult, -hex_motor_ticks * mult, hex_motor_ticks * mult, 1);
+                break;
 
 /*
                 FrontRight.setPower((-pivot + (vertical - horizontal)) * 0.8);

@@ -26,7 +26,7 @@ public class CameraTest extends OpMode {
     public void init() {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
         cameraMonitor = new CameraMonitor(webcamName);
-        Thread t1 = new Thread(cameraMonitor,"t1");
+        Thread t1 = new Thread(cameraMonitor, "t1");
         t1.start();
     }
 

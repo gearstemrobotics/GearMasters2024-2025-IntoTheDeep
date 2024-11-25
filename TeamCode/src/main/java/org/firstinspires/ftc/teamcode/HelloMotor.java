@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -18,14 +19,14 @@ public class HelloMotor extends OpMode {
     private ColorSensor color;
     private DistanceSensor distance;
     private TouchSensor touchSen;
+
     @Override
-    public void init()
-    {
+    public void init() {
         Arm = hardwareMap.get(DcMotor.class, "Arm");
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         touchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
         color = hardwareMap.get(ColorSensor.class, "Color");
-        distance =  hardwareMap.get(DistanceSensor.class, "distance");
+        distance = hardwareMap.get(DistanceSensor.class, "distance");
     }
 
     @Override
@@ -34,13 +35,11 @@ public class HelloMotor extends OpMode {
         if (gamepad1.left_trigger > 0) // if left trigger > 0
         {
             power = gamepad1.left_trigger;
-        }
-        else // check rtrigger
+        } else // check rtrigger
         {
             power = -gamepad1.right_trigger;
         }
-        if (touchSen.isPressed())
-        {
+        if (touchSen.isPressed()) {
             power = 0;
         }
         Arm.setPower(power);
