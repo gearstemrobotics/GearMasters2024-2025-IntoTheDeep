@@ -23,12 +23,14 @@ public class NewTestAutoEncode extends LinearOpMode {
     private DcMotor FrontRight;
     private DcMotor FrontLeft;
     private DcMotor BackRight;
-    private DcMotor Arm;
-    private DcMotor Arm2;
-    private DcMotor Arm3;
+    private DcMotor extendArm;
+    private DcMotor liftArm;
+    private DcMotor angleArm;
 
 
-    //extra may not work
+    int anglePos;
+    int liftPos;
+    int extendPos;
     int FrontRightPos;
     int LeftArmPos;
     int BackRightPos;
@@ -36,7 +38,31 @@ public class NewTestAutoEncode extends LinearOpMode {
     int FrontLeftPos;
     int BackLeftPos;
 
-    private void drive(double FrontRightTarget, double BackRightTarget, double FrontLeftTarget, double BackLeftTarget, double Speed) {
+
+    //arm encoder stuff
+    private void arm(double ExtendArmTarget, double LiftArmTarget, double AngleArmTarget, double Speed) {
+        extendPos += ExtendArmTarget;
+        liftPos += LiftArmTarget;
+        anglePos += AngleArmTarget;
+        extendArm.setTargetPosition(extendPos);
+        liftArm.setTargetPosition(liftPos);
+        angleArm.setTargetPosition(anglePos);
+        extendArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        angleArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendArm.setPower(Speed);
+        liftArm.setPower(Speed);
+        angleArm.setPower(Speed);
+        while (opModeIsActive() && extendArm.isBusy() && liftArm.isBusy() && angleArm.isBusy()) {
+            // Do nothing
+        }
+        extendArm.setPower(0);
+        liftArm.setPower(0);
+        angleArm.setPower(0);
+    }
+
+    private void drive(double FrontRightTarget, double BackRightTarget,
+                       double FrontLeftTarget, double BackLeftTarget, double Speed) {
         FrontRightPos += FrontRightTarget;
         BackRightPos += BackRightTarget;
         FrontLeftPos += FrontLeftTarget;
@@ -85,16 +111,21 @@ public class NewTestAutoEncode extends LinearOpMode {
         FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
         FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
         BackRight = hardwareMap.get(DcMotor.class, "BackRight");
-      //  Arm = hardwareMap.get(DcMotor.class, "Arm");
-       // Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
-       // Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
+        extendArm = hardwareMap.get(DcMotor.class, "extendArm");
+        liftArm = hardwareMap.get(DcMotor.class, "liftArm");
+        angleArm = hardwareMap.get(DcMotor.class, "angleArm");
+        //  Arm = hardwareMap.get(DcMotor.class, "Arm");
+        // Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
+        // Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
         blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
         if (opModeIsActive()) {
 
-
+            extendArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            angleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -103,6 +134,9 @@ public class NewTestAutoEncode extends LinearOpMode {
             BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            extendArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            angleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
             double mult = 4;
@@ -112,25 +146,22 @@ public class NewTestAutoEncode extends LinearOpMode {
 
                 sleep(500);
                 hex_motor_ticks = 288;
+                extendPos = 0;
+                liftPos = 0;
+                anglePos = 0;
                 FrontRightPos = 0;
                 BackRightPos = 0;
                 FrontLeftPos = 0;
                 BackLeftPos = 0;
                 sleep(500);
-                drive(hex_motor_ticks * mult, - hex_motor_ticks * mult, -hex_motor_ticks * mult, hex_motor_ticks * mult, 1);
+                //drives right then forward
+                drive(hex_motor_ticks * mult, -hex_motor_ticks * mult, -hex_motor_ticks * mult, hex_motor_ticks * mult, 1);
+                // extends arm up then moves forward then extends arm down
+                arm(hex_motor_ticks * mult, -hex_motor_ticks * mult, -hex_motor_ticks * mult,  1);
                 break;
 
-/*
-                FrontRight.setPower((-pivot + (vertical - horizontal)) * 0.8);
-                BackRight.setPower((-pivot + vertical + horizontal) * 0.8);
-                FrontLeft.setPower((pivot + vertical + horizontal) * 0.8);
-                BackLeft.setPower((pivot + (vertical - horizontal)) * 0.8);
-                BackLeft.setTargetPosition((int) 0.5);
-                if (BackLeft.getCurrentPosition() > 50000) {
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
-                    vertical = 0;
-                    BackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                   // requestOpModeStop(); */
+
+
             }
             telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
             telemetry.addData("BackLeft.getCurrentPosition", BackLeft.getCurrentPosition());
