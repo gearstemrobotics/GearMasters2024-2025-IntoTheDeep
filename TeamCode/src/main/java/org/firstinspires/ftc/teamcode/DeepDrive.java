@@ -103,42 +103,47 @@ public class DeepDrive extends LinearOpMode {
                 }
 
                 // true red
-                if (Red > 500) {
+                if (Red > 2000) {
 
                     blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
                 }
 
                 // less red
-                if (Red > 250) {
+               // if (Red > 1000) {
 
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                 //   blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                //}
+
+                if (Red < 800 & Blue < 800)
+                {
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
                 }
 
 
                 // true blue
-                if (Blue > 500) {
+                if (Blue > 2000) {
 
                     blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
                 }
 
 
                 // less blue
-                if (Blue > 250) {
+                //if (Blue > 1000) {
 
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
-                }
+                  //  blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
+                //}
 
                 // less yellow
-                if (Red > 250) {
+              //  if (Red > 250) {
 
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
-                }
+                //    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                //}
 
                 // true yellow
-                if (Red > 250) {
+                //if (Red > 250) {
 
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-                }
+                  //  blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                //}
 
 
                 //extra arm
