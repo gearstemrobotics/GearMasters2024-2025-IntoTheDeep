@@ -20,6 +20,8 @@ public class DeepDrive extends LinearOpMode {
     private CRServo gripper2;
 
     private TouchSensor TouchSen;
+
+    private TouchSensor magSen;
     private ColorSensor color;
 
     private DcMotor BackLeft;
@@ -59,18 +61,20 @@ public class DeepDrive extends LinearOpMode {
         float power2 = 0;
         float power = 0;
         float power3 = 0;
+        float power4 = 0;
         int Red;
         int Blue;
         int Green;
         boolean pressed = true;
 
 
-            extendArm = hardwareMap.get(DcMotor.class, "extendArm");
-            liftArm = hardwareMap.get(DcMotor.class, "liftArm");
-            angleArm = hardwareMap.get(DcMotor.class, "angleArm");
+        extendArm = hardwareMap.get(DcMotor.class, "extendArm");
+        liftArm = hardwareMap.get(DcMotor.class, "liftArm");
+        angleArm = hardwareMap.get(DcMotor.class, "angleArm");
 
 
         TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
+        magSen = hardwareMap.get(TouchSensor.class, "magSen");
         color = hardwareMap.get(ColorSensor.class, "Color");
         gripper = hardwareMap.get(Servo.class, "gripper");
         gripper2 = hardwareMap.get(CRServo.class, "gripper2");
@@ -82,7 +86,7 @@ public class DeepDrive extends LinearOpMode {
         waitForStart();
         t1.start();
         if (opModeIsActive()) {
-           // t1.start();
+            // t1.start();
             while (opModeIsActive()) {
 
 
@@ -91,18 +95,18 @@ public class DeepDrive extends LinearOpMode {
                 Green = color.green();
 
 
-                if (gamepad2.left_trigger > 0) // if left trigger > 0
+                if (gamepad1.left_trigger > 0) // if left trigger > 0
                 {
-                    power2 = gamepad2.left_trigger;
+                    power2 = gamepad1.left_trigger;
                     gamepad2.rumble(100);
                 } else // check rtrigger
                 {
-                    power2 = -gamepad2.right_trigger;
+                    power2 = -gamepad1.right_trigger;
                     gamepad2.rumble(100);
                 }
 
 
-                    liftArm.setPower(power2);
+                liftArm.setPower(power2);
 
 
                 // true red
@@ -151,48 +155,72 @@ public class DeepDrive extends LinearOpMode {
                 //extra arm
                 power = 0;
                 power = gamepad2.right_stick_y;
-                    extendArm.setPower(power);
+                extendArm.setPower(power);
 
 
-                //lift arm
-               // if (TouchSen.isPressed()) {
-                 //   power = 0;
-               // } else {
-
-               // }
+                // touch sen
+                if (TouchSen.isPressed() || magSen.isPressed()) {
+                    power = 0;
+                }
 
 
-                    extendArm.setPower(power);
+                extendArm.setPower(power);
 
 
                 power3 = 0;
-                power3 = gamepad2.left_stick_y;
+                power3 = -gamepad2.left_stick_y;
 
-                    angleArm.setPower(power3);
+                angleArm.setPower(power3);
+
+                power4 = 0;
 
 
+                if (gamepad2.left_trigger > 0) // if left trigger > 0
+                {
+                    //power4 = gamepad2.left_trigger;
+                    //gamepad2.rumble(100);
+                    gripper2.setPower(1);
+                } else if (gamepad2.right_trigger > 0) {
+                    gripper2.setPower(-1);
+                }
+                else {
+                    gripper2.setPower(0);
+                }
+
+
+
+                /*
                 double open = 1;
                 //Servo
                 if (gamepad2.a) {
                     gripper.setPosition(open);
-                   // gripper2.setPower(open);
+                    gripper2.setPower(1);
                 }
 
                 double close = 0;
 
                 if (gamepad2.b) {
                     gripper.setPosition(close);
-                   // gripper2.setPower(close);
+                    gripper2.setPower(-1);
                 }
+                if (gamepad2.y) {
+                    gripper.setPosition(close);
+                    gripper2.setPower(0);
+                }
+
+
+                 */
+
+
 
                 telemetry.addData("power", power);
                 telemetry.addData("power2", power2);
                 telemetry.addData("power3", power3);
                 telemetry.addData("Touched", TouchSen.getValue());
+                telemetry.addData("Touched Magnet", magSen.getValue());
                 telemetry.addData("Red", color.red());
                 telemetry.addData("Green", color.green());
                 telemetry.addData("Blue", color.blue());
-                telemetry.addData("Green", color.green());
                 telemetry.update();
 
 

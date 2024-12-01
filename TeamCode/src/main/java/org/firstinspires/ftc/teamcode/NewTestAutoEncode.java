@@ -63,6 +63,8 @@ public class NewTestAutoEncode extends LinearOpMode {
 
     private void drive(double FrontRightTarget, double BackRightTarget,
                        double FrontLeftTarget, double BackLeftTarget, double Speed) {
+
+        BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRightPos += FrontRightTarget;
         BackRightPos += BackRightTarget;
         FrontLeftPos += FrontLeftTarget;
@@ -118,10 +120,13 @@ public class NewTestAutoEncode extends LinearOpMode {
         // Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
         // Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
         blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-        BackRight.setDirection(DcMotor.Direction.REVERSE);
+
 
         waitForStart();
         if (opModeIsActive()) {
+
+            BackRight.setDirection(DcMotor.Direction.REVERSE);
+            FrontLeft.setDirection(DcMotor.Direction.REVERSE);
 
             extendArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -154,24 +159,20 @@ public class NewTestAutoEncode extends LinearOpMode {
                 FrontLeftPos = 0;
                 BackLeftPos = 0;
                 sleep(500);
-                //strafe left
-              //  drive(-hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, 1);
-                // moves forward
-               // drive(hex_motor_ticks * mult, hex_motor_ticks * mult, hex_motor_ticks * mult, hex_motor_ticks * mult, 1);
-                // extends arm up
-               // arm(hex_motor_ticks * 10, 0,  0, 1);
-                // drives forward
-               // drive(-hex_motor_ticks * mult, hex_motor_ticks * mult, hex_motor_ticks * mult, -hex_motor_ticks * mult, 1);
-                // extends the arm up
-                //arm(hex_motor_ticks * 50000, 0,  0, 1);
-                sleep(500);
-                arm(0, hex_motor_ticks * 100,  0, 0.5 );
-                sleep(1000);
-                arm(0, hex_motor_ticks * 100,  0, 1);
-                sleep(500);
-                arm(0, hex_motor_ticks * 100,  0, 0.5);
+                //Lift arm and strafe left at the same time
+                 arm(0, hex_motor_ticks * 12,  0, 0.5 );
+                 sleep(500);
+               // sleep(1000);
+                drive( hex_motor_ticks * 8, -hex_motor_ticks * 8, -hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);
+               // sleep(1000);
+                // moves the arm down
+                arm(0, -hex_motor_ticks * 12,  0, 0.5 );
+                // Moves to the wall
+                sleep(3000);
+                drive(hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, -hex_motor_ticks * 8, 0.5);
+                //Moves to the corner
+                drive(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);
 
-              //  arm(0, 0,  -hex_motor_ticks * 500, 1);
                 break;
 
 
