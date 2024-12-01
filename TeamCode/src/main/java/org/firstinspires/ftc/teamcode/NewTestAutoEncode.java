@@ -53,7 +53,7 @@ public class NewTestAutoEncode extends LinearOpMode {
         extendArm.setPower(Speed);
         liftArm.setPower(Speed);
         angleArm.setPower(Speed);
-        while (opModeIsActive() && extendArm.isBusy() && liftArm.isBusy() && angleArm.isBusy()) {
+        while (opModeIsActive() && (extendArm.isBusy() || liftArm.isBusy() || angleArm.isBusy())) {
             // Do nothing
         }
         extendArm.setPower(0);
@@ -95,10 +95,10 @@ public class NewTestAutoEncode extends LinearOpMode {
 
         int hex_motor_ticks;
 
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
-        cameraMonitor = new CameraMonitor(webcamName);
-        Thread t1 = new Thread(cameraMonitor, "t1");
-        t1.start();
+       // WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
+       // cameraMonitor = new CameraMonitor(webcamName);
+       // Thread t1 = new Thread(cameraMonitor, "t1");
+       // t1.start();
 
 
         float vertical = 1;
@@ -154,18 +154,31 @@ public class NewTestAutoEncode extends LinearOpMode {
                 FrontLeftPos = 0;
                 BackLeftPos = 0;
                 sleep(500);
-                //drives right then forward
-                drive(hex_motor_ticks * mult, -hex_motor_ticks * mult, -hex_motor_ticks * mult, hex_motor_ticks * mult, 1);
-                // extends arm up then moves forward then extends arm down
-                arm(hex_motor_ticks * mult, -hex_motor_ticks * mult, -hex_motor_ticks * mult,  1);
+                //strafe left
+              //  drive(-hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, 1);
+                // moves forward
+               // drive(hex_motor_ticks * mult, hex_motor_ticks * mult, hex_motor_ticks * mult, hex_motor_ticks * mult, 1);
+                // extends arm up
+               // arm(hex_motor_ticks * 10, 0,  0, 1);
+                // drives forward
+               // drive(-hex_motor_ticks * mult, hex_motor_ticks * mult, hex_motor_ticks * mult, -hex_motor_ticks * mult, 1);
+                // extends the arm up
+                //arm(hex_motor_ticks * 50000, 0,  0, 1);
+                sleep(500);
+                arm(0, hex_motor_ticks * 100,  0, 0.5 );
+                sleep(1000);
+                arm(0, hex_motor_ticks * 100,  0, 1);
+                sleep(500);
+                arm(0, hex_motor_ticks * 100,  0, 0.5);
+
+              //  arm(0, 0,  -hex_motor_ticks * 500, 1);
                 break;
 
 
-
             }
-            telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
-            telemetry.addData("BackLeft.getCurrentPosition", BackLeft.getCurrentPosition());
-            telemetry.update();
+            //telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
+            //telemetry.addData("BackLeft.getCurrentPosition", BackLeft.getCurrentPosition());
+           // telemetry.update();
 
 
         }

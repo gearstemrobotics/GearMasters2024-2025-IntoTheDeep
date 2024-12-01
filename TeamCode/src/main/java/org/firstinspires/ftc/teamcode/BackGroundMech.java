@@ -38,6 +38,7 @@ public class BackGroundMech implements Runnable {
             BackRight.setPower((-pivot + vertical + horizontal) * 0.8);
             FrontLeft.setPower((pivot + vertical + horizontal) * 0.8);
             BackLeft.setPower((pivot + (vertical - horizontal)) * 0.8);
+
             //BackLeft.setTargetPosition((int) 0.5);
         }
 
