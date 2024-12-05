@@ -18,13 +18,13 @@ public class TestingTheEncodeForReal extends LinearOpMode {
     private ColorSensor color;
 
     private CameraMonitor cameraMonitor;
-/*
+
     private DcMotor BackLeft;
     private DcMotor FrontRight;
     private DcMotor FrontLeft;
-    private DcMotor BackRight;\
+    private DcMotor BackRight;
 
- */
+
     private DcMotor extendArm;
     private DcMotor liftArm;
     private DcMotor angleArm;
@@ -69,25 +69,25 @@ public class TestingTheEncodeForReal extends LinearOpMode {
         BackRightPos += BackRightTarget;
         FrontLeftPos += FrontLeftTarget;
         BackLeftPos += BackLeftTarget;
-       // FrontRight.setTargetPosition(FrontRightPos);
-       // BackRight.setTargetPosition(BackRightPos);
-       // FrontLeft.setTargetPosition(FrontLeftPos);
-        //BackLeft.setTargetPosition(BackLeftPos);
-        //FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //FrontRight.setPower(Speed);
-        //BackRight.setPower(Speed);
-        //FrontLeft.setPower(Speed);
-        //BackLeft.setPower(Speed);
-        //while (opModeIsActive() && FrontRight.isBusy() && BackRight.isBusy() && FrontLeft.isBusy() && BackLeft.isBusy()) {
+        FrontRight.setTargetPosition(FrontRightPos);
+        BackRight.setTargetPosition(BackRightPos);
+        FrontLeft.setTargetPosition(FrontLeftPos);
+        BackLeft.setTargetPosition(BackLeftPos);
+        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRight.setPower(Speed);
+        BackRight.setPower(Speed);
+        FrontLeft.setPower(Speed);
+        BackLeft.setPower(Speed);
+        while (opModeIsActive() && FrontRight.isBusy() && BackRight.isBusy() && FrontLeft.isBusy() && BackLeft.isBusy()) {
             // Do nothing
-        //}
-        //FrontRight.setPower(0);
-        //BackRight.setPower(0);
-        //FrontLeft.setPower(0);
-        //BackLeft.setPower(0);
+        }
+        FrontRight.setPower(0);
+        BackRight.setPower(0);
+        FrontLeft.setPower(0);
+        BackLeft.setPower(0);
     }
 
 
@@ -109,10 +109,10 @@ public class TestingTheEncodeForReal extends LinearOpMode {
 
 
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
-       // BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
-       // FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
-       // FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
-       // BackRight = hardwareMap.get(DcMotor.class, "BackRight");
+        BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
+        FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
+        FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
+        BackRight = hardwareMap.get(DcMotor.class, "BackRight");
         extendArm = hardwareMap.get(DcMotor.class, "extendArm");
         liftArm = hardwareMap.get(DcMotor.class, "liftArm");
         angleArm = hardwareMap.get(DcMotor.class, "angleArm");
@@ -124,18 +124,23 @@ public class TestingTheEncodeForReal extends LinearOpMode {
 
         waitForStart();
         if (opModeIsActive()) {
-
+           // FrontRight.setDirection(DcMotor.Direction.REVERSE);
+           // BackRight.setDirection(DcMotor.Direction.REVERSE);
+           // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+           // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+            BackRight.setDirection(DcMotor.Direction.REVERSE);
+           // BackLeft.setDirection(DcMotor.Direction.REVERSE);
             extendArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             angleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-           // FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-           // BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-           // FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-           // BackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-           // BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-           // BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-           // FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-           // FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             extendArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             angleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -156,7 +161,7 @@ public class TestingTheEncodeForReal extends LinearOpMode {
                 FrontLeftPos = 0;
                 BackLeftPos = 0;
                 sleep(500);
-                arm(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 1);
+                drive(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);               // arm(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 1);
 
                 break;
             }

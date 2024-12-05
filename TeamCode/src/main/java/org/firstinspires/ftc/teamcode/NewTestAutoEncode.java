@@ -125,9 +125,10 @@ public class NewTestAutoEncode extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
 
+
             BackRight.setDirection(DcMotor.Direction.REVERSE);
             FrontLeft.setDirection(DcMotor.Direction.REVERSE);
-
+            BackLeft.setDirection(DcMotor.Direction.REVERSE);
             extendArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             angleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -160,18 +161,20 @@ public class NewTestAutoEncode extends LinearOpMode {
                 BackLeftPos = 0;
                 sleep(500);
                 //Lift arm and strafe left at the same time
-                 arm(0, hex_motor_ticks * 12,  0, 0.5 );
-                 sleep(500);
+                 arm(0, hex_motor_ticks * 11,  0, 0.5 );
+                 sleep(1000);
+                drive(-hex_motor_ticks * 8, -hex_motor_ticks * 8, -hex_motor_ticks * 8, -hex_motor_ticks * 8, 0.5);
                // sleep(1000);
-                drive( hex_motor_ticks * 8, -hex_motor_ticks * 8, -hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);
+                drive( -hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);
                // sleep(1000);
                 // moves the arm down
                 arm(0, -hex_motor_ticks * 12,  0, 0.5 );
                 // Moves to the wall
                 sleep(3000);
-                drive(hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, -hex_motor_ticks * 8, 0.5);
+                //drive(hex_motor_ticks * 8, -hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, 0.5);
                 //Moves to the corner
-                drive(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);
+
+
 
                 break;
 
