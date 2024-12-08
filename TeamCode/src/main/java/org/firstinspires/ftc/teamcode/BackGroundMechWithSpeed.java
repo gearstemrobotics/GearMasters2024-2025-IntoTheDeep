@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class BackGroundMech implements Runnable {
+public class BackGroundMechWithSpeed implements Runnable {
     private boolean isRunning = true;
 
     private DcMotor BackLeft;
@@ -15,7 +15,7 @@ public class BackGroundMech implements Runnable {
     private Gamepad GP;
 
     //All motors
-    public BackGroundMech(Gamepad gamepad, DcMotor frontRight, DcMotor frontLeft, DcMotor backRight, DcMotor backLeft) {
+    public BackGroundMechWithSpeed(Gamepad gamepad, DcMotor frontRight, DcMotor frontLeft, DcMotor backRight, DcMotor backLeft) {
         GP = gamepad;
         FrontRight = frontRight;
         FrontLeft = frontLeft;
@@ -35,19 +35,19 @@ public class BackGroundMech implements Runnable {
             float horizontal = GP.left_stick_x;
             float pivot = GP.left_stick_y;
 
-            if (GP.left_bumper)
+            if (GP.a)
             {
                 FrontRight.setPower((-pivot + (vertical - horizontal)) * 0.5);
                 BackRight.setPower((-pivot + vertical + horizontal) * 0.5);
                 FrontLeft.setPower((pivot + vertical + horizontal) * 0.5);
                 BackLeft.setPower((pivot + (vertical - horizontal)) * 0.5);
             }
-            else if (GP.right_bumper)
+            else if (GP.b)
             {
-                FrontRight.setPower((-pivot + (vertical - horizontal)) * 0.25);
-                BackRight.setPower((-pivot + vertical + horizontal) * 0.25);
-                FrontLeft.setPower((pivot + vertical + horizontal) * 0.25);
-                BackLeft.setPower((pivot + (vertical - horizontal)) * 0.25);
+                FrontRight.setPower((-pivot + (vertical - horizontal)) * 1);
+                BackRight.setPower((-pivot + vertical + horizontal) * 1);
+                FrontLeft.setPower((pivot + vertical + horizontal) * 1);
+                BackLeft.setPower((pivot + (vertical - horizontal)) * 1);
             }
             else
             {

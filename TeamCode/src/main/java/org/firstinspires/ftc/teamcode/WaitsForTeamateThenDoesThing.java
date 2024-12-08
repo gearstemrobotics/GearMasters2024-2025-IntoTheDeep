@@ -9,9 +9,10 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.CameraMonitor;
 
 @Autonomous
-public class NewTestAutoEncode extends LinearOpMode {
+public class WaitsForTeamateThenDoesThing extends LinearOpMode {
 
     private TouchSensor TouchSen;
     RevBlinkinLedDriver blinkinLedDriver;
@@ -97,10 +98,10 @@ public class NewTestAutoEncode extends LinearOpMode {
 
         int hex_motor_ticks;
 
-       // WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
-       // cameraMonitor = new CameraMonitor(webcamName);
-       // Thread t1 = new Thread(cameraMonitor, "t1");
-       // t1.start();
+        // WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
+        // cameraMonitor = new CameraMonitor(webcamName);
+        // Thread t1 = new Thread(cameraMonitor, "t1");
+        // t1.start();
 
 
         float vertical = 1;
@@ -160,16 +161,16 @@ public class NewTestAutoEncode extends LinearOpMode {
                 FrontLeftPos = 0;
                 BackLeftPos = 0;
                 sleep(500);
-                //############################################
+                //###################################################
                 //WARNING MAY NOT WORK CTRL Z IT OR REVERSE THE ORDER
-                //############################################
+                //###################################################
                 //Lift arm and strafe left at the same time
-                 arm(0, hex_motor_ticks * 12,  0, 0.5 );
-                 sleep(1000);
+                arm(0, hex_motor_ticks * 12,  0, 1 );
+                sleep(5000);
                 drive(-hex_motor_ticks * 7.5, -hex_motor_ticks * 7.5, -hex_motor_ticks * 7.5, -hex_motor_ticks * 7.5, 0.5);
-               // sleep(1000);
+                // sleep(1000);
                 drive( -hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);
-               // sleep(1000);
+                // sleep(1000);
                 // moves the arm down
                 arm(0, -hex_motor_ticks * 12,  0, 0.5 );
                 // Moves to the wall
@@ -177,7 +178,7 @@ public class NewTestAutoEncode extends LinearOpMode {
                 //drive(hex_motor_ticks * 8, -hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, 0.5);
                 //Moves to the corner
                 drive( hex_motor_ticks * 7, -hex_motor_ticks * 7, hex_motor_ticks * 7, - hex_motor_ticks * 7  , 0.5);
-
+                drive(-hex_motor_ticks * 7.5, -hex_motor_ticks * 7.5, -hex_motor_ticks * 7.5, -hex_motor_ticks * 7.5, 0.5);
 
 
 
@@ -187,7 +188,7 @@ public class NewTestAutoEncode extends LinearOpMode {
             }
             //telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
             //telemetry.addData("BackLeft.getCurrentPosition", BackLeft.getCurrentPosition());
-           // telemetry.update();
+            // telemetry.update();
 
 
         }

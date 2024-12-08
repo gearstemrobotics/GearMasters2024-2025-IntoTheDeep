@@ -81,7 +81,7 @@ public class TestingTheEncodeForReal extends LinearOpMode {
         BackRight.setPower(Speed);
         FrontLeft.setPower(Speed);
         BackLeft.setPower(Speed);
-        while (opModeIsActive() && FrontRight.isBusy() && BackRight.isBusy() && FrontLeft.isBusy() && BackLeft.isBusy()) {
+        while (opModeIsActive() && (FrontRight.isBusy() || BackRight.isBusy() || FrontLeft.isBusy() || BackLeft.isBusy())) {
             // Do nothing
         }
         FrontRight.setPower(0);
@@ -97,10 +97,10 @@ public class TestingTheEncodeForReal extends LinearOpMode {
 
         int hex_motor_ticks;
 
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
-        cameraMonitor = new CameraMonitor(webcamName);
-        Thread t1 = new Thread(cameraMonitor, "t1");
-        t1.start();
+       // WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
+       // cameraMonitor = new CameraMonitor(webcamName);
+       // Thread t1 = new Thread(cameraMonitor, "t1");
+       // t1.start();
 
 
         float vertical = 1;
@@ -128,7 +128,10 @@ public class TestingTheEncodeForReal extends LinearOpMode {
            // BackRight.setDirection(DcMotor.Direction.REVERSE);
            // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
            // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+           // BackRight.setDirection(DcMotor.Direction.REVERSE);
             BackRight.setDirection(DcMotor.Direction.REVERSE);
+            FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+            BackLeft.setDirection(DcMotor.Direction.REVERSE);
            // BackLeft.setDirection(DcMotor.Direction.REVERSE);
             extendArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -162,12 +165,12 @@ public class TestingTheEncodeForReal extends LinearOpMode {
                 BackLeftPos = 0;
                 sleep(500);
                 drive(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);               // arm(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 1);
-
+               // arm(0, hex_motor_ticks * 12,  0, 1 );
                 break;
             }
-            telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
+           // telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
             //telemetry.addData("BackLeft.getCurrentPosition", BackLeft.getCurrentPosition());
-            telemetry.update();
+           // telemetry.update();
 
 
         }
