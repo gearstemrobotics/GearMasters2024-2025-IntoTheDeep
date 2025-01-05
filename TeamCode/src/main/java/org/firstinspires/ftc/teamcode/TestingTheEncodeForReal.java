@@ -165,7 +165,6 @@ public class TestingTheEncodeForReal extends LinearOpMode {
                 BackLeftPos = 0;
                 sleep(500);
                 drive(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);               // arm(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 1);
-               // arm(0, hex_motor_ticks * 12,  0, 1 );
                 break;
             }
            // telemetry.addData("April Tags", cameraMonitor.GetIdsFound());

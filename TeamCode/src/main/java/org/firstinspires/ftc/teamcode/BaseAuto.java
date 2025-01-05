@@ -35,6 +35,7 @@ public abstract class BaseAuto extends LinearOpMode {
     int FrontLeftPos;
     int BackLeftPos;
 
+
     BaseAuto()
     {
         extendPos = 0;
