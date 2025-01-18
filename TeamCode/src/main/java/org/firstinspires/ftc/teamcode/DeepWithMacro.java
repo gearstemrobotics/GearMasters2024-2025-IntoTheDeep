@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+//import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 @TeleOp
 public class DeepWithMacro extends BaseAuto {
-    RevBlinkinLedDriver blinkinLedDriver;
+   // RevBlinkinLedDriver blinkinLedDriver;
     private Servo gripper;
     private CRServo gripper2;
 
@@ -53,7 +53,7 @@ public class DeepWithMacro extends BaseAuto {
         Thread t1 = new Thread(task, "t1");
 
 
-        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
+       // blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
 
         float power2 = 0;
         float power = 0;
@@ -110,7 +110,7 @@ public class DeepWithMacro extends BaseAuto {
                 // true red
                 if (Red > 2000) {
 
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                  //  blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
                 }
 
                 // less red
@@ -120,14 +120,14 @@ public class DeepWithMacro extends BaseAuto {
                 //}
 
                 if (Red < 800 & Blue < 800) {
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                  //  blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
                 }
 
 
                 // true blue
                 if (Blue > 2000) {
 
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                  //  blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
                 }
 
 
@@ -152,7 +152,7 @@ public class DeepWithMacro extends BaseAuto {
 
                 //extra arm
                 power = 0;
-                power = gamepad2.right_stick_y;
+                power = -gamepad2.right_stick_y;
                 extendArm.setPower(power);
 
 
@@ -166,7 +166,7 @@ public class DeepWithMacro extends BaseAuto {
 
 
                 power3 = 0;
-                power3 = -gamepad2.left_stick_y;
+                power3 = gamepad2.left_stick_y;
 
                 angleArm.setPower(power3);
 
@@ -190,7 +190,7 @@ public class DeepWithMacro extends BaseAuto {
                     BackRightPos = 0;
                     FrontLeftPos = 0;
                     BackLeftPos = 0;
-                    arm(0, 0, -hex_motor_ticks * 5, 1);
+                    arm(5, 0, 0, 1);
                 }
 
 

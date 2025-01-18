@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-        import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+     //   import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
         import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -14,7 +14,7 @@ package org.firstinspires.ftc.teamcode;
 public class TestingTheEncodeForReal extends LinearOpMode {
 
     private TouchSensor TouchSen;
-    RevBlinkinLedDriver blinkinLedDriver;
+   // RevBlinkinLedDriver blinkinLedDriver;
     private ColorSensor color;
 
     private CameraMonitor cameraMonitor;
@@ -108,7 +108,7 @@ public class TestingTheEncodeForReal extends LinearOpMode {
         float pivot = 0;
 
 
-        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
+      //  blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
         BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
         FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
         FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
@@ -119,7 +119,7 @@ public class TestingTheEncodeForReal extends LinearOpMode {
         //  Arm = hardwareMap.get(DcMotor.class, "Arm");
         // Arm2 = hardwareMap.get(DcMotor.class, "Arm2");
         // Arm3 = hardwareMap.get(DcMotor.class, "Arm3");
-        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+      //  blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
        // BackRight.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
@@ -129,8 +129,8 @@ public class TestingTheEncodeForReal extends LinearOpMode {
            // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
            // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
            // BackRight.setDirection(DcMotor.Direction.REVERSE);
-            BackRight.setDirection(DcMotor.Direction.REVERSE);
-            FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+           // BackRight.setDirection(DcMotor.Direction.REVERSE);
+           // FrontLeft.setDirection(DcMotor.Direction.REVERSE);
             BackLeft.setDirection(DcMotor.Direction.REVERSE);
            // BackLeft.setDirection(DcMotor.Direction.REVERSE);
             extendArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -164,7 +164,7 @@ public class TestingTheEncodeForReal extends LinearOpMode {
                 FrontLeftPos = 0;
                 BackLeftPos = 0;
                 sleep(500);
-                drive(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);               // arm(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 1);
+                drive(-hex_motor_ticks * 90, hex_motor_ticks * 90, hex_motor_ticks * 90, -hex_motor_ticks * 90, 0.25);               // arm(hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, 1);
                 break;
             }
            // telemetry.addData("April Tags", cameraMonitor.GetIdsFound());

@@ -1,5 +1,5 @@
+//#####FIXED#####
 package org.firstinspires.ftc.teamcode;
-
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -28,13 +28,13 @@ public class JustPutsTheThingOnTheThing extends BaseAuto {
         FrontLeftPos = 0;
         BackLeftPos = 0;
         arm(0, hex_motor_ticks * 12, 0, 1);
-        drive(-hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, hex_motor_ticks * 8, 0.5);
+        drive(-hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, 0.5);
         // moves the arm down
         arm(0, -hex_motor_ticks * 12, 0, 0.5);
         // Moves to the wall
         sleep(200);
         //Moves to the corner
-        drive(hex_motor_ticks * 5, -hex_motor_ticks * 5, hex_motor_ticks * 5, -hex_motor_ticks * 5, 0.5);
+        drive(hex_motor_ticks * 5, -hex_motor_ticks * 5, -hex_motor_ticks * 5, hex_motor_ticks * 5, 0.5);
         drive(-hex_motor_ticks * 7, -hex_motor_ticks * 7, -hex_motor_ticks * 7, -hex_motor_ticks * 7, 0.5);
     }
     //telemetry.addData("April Tags", cameraMonitor.GetIdsFound());

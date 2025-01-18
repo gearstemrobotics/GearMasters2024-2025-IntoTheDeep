@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+//import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 public abstract class BaseAuto extends LinearOpMode {
 
     protected TouchSensor TouchSen;
-    protected RevBlinkinLedDriver blinkinLedDriver;
+   // protected RevBlinkinLedDriver blinkinLedDriver;
     protected ColorSensor color;
 
     protected CameraMonitor cameraMonitor;
@@ -72,7 +73,7 @@ public abstract class BaseAuto extends LinearOpMode {
     protected void drive(double FrontRightTarget, double BackRightTarget,
                        double FrontLeftTarget, double BackLeftTarget, double Speed) {
 
-        BackRight.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
         FrontRightPos += FrontRightTarget;
         BackRightPos += BackRightTarget;
         FrontLeftPos += FrontLeftTarget;
@@ -114,7 +115,7 @@ public abstract class BaseAuto extends LinearOpMode {
     }
 
     protected void Map() {
-        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
+        //blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
         BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
         FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
         FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
@@ -122,13 +123,13 @@ public abstract class BaseAuto extends LinearOpMode {
         extendArm = hardwareMap.get(DcMotor.class, "extendArm");
         liftArm = hardwareMap.get(DcMotor.class, "liftArm");
         angleArm = hardwareMap.get(DcMotor.class, "angleArm");
-        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        //blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 
     protected void PrepMotor() {
-        BackRight.setDirection(DcMotor.Direction.REVERSE);
-        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        liftArm.setDirection(DcMotorSimple.Direction.REVERSE);
         extendArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         angleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

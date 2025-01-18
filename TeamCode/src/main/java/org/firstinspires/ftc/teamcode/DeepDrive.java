@@ -15,7 +15,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 public class DeepDrive extends LinearOpMode {
 
 
-    RevBlinkinLedDriver blinkinLedDriver;
+    //RevBlinkinLedDriver blinkinLedDriver;
     private Servo gripper;
     private CRServo gripper2;
 
@@ -57,7 +57,7 @@ public class DeepDrive extends LinearOpMode {
         Thread t1 = new Thread(task, "t1");
 
 
-        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
+  //  blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
 
         float power2 = 0;
         float power = 0;
@@ -114,7 +114,7 @@ public class DeepDrive extends LinearOpMode {
                 // true red
                 if (Red > 2000) {
 
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                   // blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
                 }
 
                 // less red
@@ -124,14 +124,14 @@ public class DeepDrive extends LinearOpMode {
                 //}
 
                 if (Red < 800 & Blue < 800) {
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                   // blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
                 }
 
 
                 // true blue
                 if (Blue > 2000) {
 
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                  //  blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
                 }
 
 
@@ -156,7 +156,7 @@ public class DeepDrive extends LinearOpMode {
 
                 //extra arm
                 power = 0;
-                power = gamepad2.right_stick_y;
+                power = -gamepad2.right_stick_y;
                 extendArm.setPower(power);
 
 
@@ -170,7 +170,7 @@ public class DeepDrive extends LinearOpMode {
 
 
                 power3 = 0;
-                power3 = -gamepad2.left_stick_y;
+                power3 = gamepad2.left_stick_y;
 
                 angleArm.setPower(power3);
 
@@ -193,7 +193,7 @@ public class DeepDrive extends LinearOpMode {
 
                 }
 
-
+                climbArm.setPower(climbPower);
                 if (gamepad2.right_bumper)
                 {
                     climbArm.setPower(1);
@@ -201,7 +201,7 @@ public class DeepDrive extends LinearOpMode {
                     climbArm.setPower(-1);
                 }
                 else climbArm.setPower(0);
-                climbArm.setPower(climbPower);
+
 
 
                 /*
