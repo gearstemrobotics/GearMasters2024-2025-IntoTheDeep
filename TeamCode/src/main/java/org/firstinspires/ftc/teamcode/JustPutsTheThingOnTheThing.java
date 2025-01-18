@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous
+@Autonomous(name = "PutsThingOnThingThenParks")
 public class JustPutsTheThingOnTheThing extends BaseAuto {
 
 

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous
+@Autonomous(name = "JustPutsTheThingOnTheThing")
 public class NewTestAutoEncode extends BaseAuto {
 
 
