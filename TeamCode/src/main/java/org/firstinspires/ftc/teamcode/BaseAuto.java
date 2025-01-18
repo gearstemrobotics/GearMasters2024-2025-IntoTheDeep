@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 
 public abstract class BaseAuto extends LinearOpMode {
@@ -24,6 +25,7 @@ public abstract class BaseAuto extends LinearOpMode {
     protected DcMotor extendArm;
     protected DcMotor liftArm;
     protected DcMotor angleArm;
+    protected CRServo gripper2;
 
 
     int anglePos;
@@ -35,6 +37,7 @@ public abstract class BaseAuto extends LinearOpMode {
     int RightArmPos;
     int FrontLeftPos;
     int BackLeftPos;
+    int gripper2Pos;
 
 
     BaseAuto()
@@ -46,6 +49,8 @@ public abstract class BaseAuto extends LinearOpMode {
         BackRightPos = 0;
         FrontLeftPos = 0;
         BackLeftPos = 0;
+        gripper2Pos = 0;
+
     }
 
     //arm encoder stuff
