@@ -96,7 +96,10 @@ public abstract class BaseAuto extends LinearOpMode {
         BackRight.setPower(Speed);
         FrontLeft.setPower(Speed);
         BackLeft.setPower(Speed);
-        while (opModeIsActive() && (FrontRight.isBusy() || BackRight.isBusy() || FrontLeft.isBusy() || BackLeft.isBusy())) {
+        while (opModeIsActive() &&
+                (FrontRight.isBusy() && BackRight.isBusy() && FrontLeft.isBusy() && BackLeft.isBusy()) // while everything is busy
+               // (FrontRight.isBusy() || BackRight.isBusy() || FrontLeft.isBusy() || BackLeft.isBusy()) // while anything is busy
+        ) {
             // Do nothing
         }
         FrontRight.setPower(0);
