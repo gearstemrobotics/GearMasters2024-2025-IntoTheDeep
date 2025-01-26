@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public abstract class BaseAuto extends LinearOpMode {
 
     protected TouchSensor TouchSen;
-   // protected RevBlinkinLedDriver blinkinLedDriver;
+    // protected RevBlinkinLedDriver blinkinLedDriver;
     protected ColorSensor color;
 
     protected CameraMonitor cameraMonitor;
@@ -26,7 +26,7 @@ public abstract class BaseAuto extends LinearOpMode {
     protected DcMotor extendArm;
     protected DcMotor liftArm;
     protected DcMotor angleArm;
-   protected CRServo gripper2;
+    protected CRServo gripper2;
 
 
     int anglePos;
@@ -38,11 +38,12 @@ public abstract class BaseAuto extends LinearOpMode {
     int RightArmPos;
     int FrontLeftPos;
     int BackLeftPos;
-   // int gripper2Pos;
 
 
-    BaseAuto()
-    {
+    // int gripper2Pos;
+
+
+    BaseAuto() {
         extendPos = 0;
         liftPos = 0;
         anglePos = 0;
@@ -50,7 +51,9 @@ public abstract class BaseAuto extends LinearOpMode {
         BackRightPos = 0;
         FrontLeftPos = 0;
         BackLeftPos = 0;
-       // gripper2Pos = 0;
+
+
+        // gripper2Pos = 0;
 
     }
 
@@ -76,8 +79,53 @@ public abstract class BaseAuto extends LinearOpMode {
         angleArm.setPower(0);
     }
 
+    protected void everything(double ExtendArmTarget, double LiftArmTarget, double AngleArmTarget, double FrontRightTarget, double BackRightTarget,
+                              double FrontLeftTarget, double BackLeftTarget, double Speed) {
+        extendPos += ExtendArmTarget;
+        liftPos += LiftArmTarget;
+        anglePos += AngleArmTarget;
+        extendArm.setTargetPosition(extendPos);
+        liftArm.setTargetPosition(liftPos);
+        angleArm.setTargetPosition(anglePos);
+        extendArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        angleArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendArm.setPower(Speed);
+        liftArm.setPower(Speed);
+        angleArm.setPower(Speed);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontRightPos += FrontRightTarget;
+        BackRightPos += BackRightTarget;
+        FrontLeftPos += FrontLeftTarget;
+        BackLeftPos += BackLeftTarget;
+        FrontRight.setTargetPosition(FrontRightPos);
+        BackRight.setTargetPosition(BackRightPos);
+        FrontLeft.setTargetPosition(FrontLeftPos);
+        BackLeft.setTargetPosition(BackLeftPos);
+        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRight.setPower(Speed);
+        BackRight.setPower(Speed);
+        FrontLeft.setPower(Speed);
+        BackLeft.setPower(Speed);
+        while (opModeIsActive() &&
+                // (FrontRight.isBusy() && BackRight.isBusy() && FrontLeft.isBusy() && BackLeft.isBusy()) // while everything is busy
+                (extendArm.isBusy() || liftArm.isBusy() || angleArm.isBusy() || FrontRight.isBusy() || BackRight.isBusy() || FrontLeft.isBusy() || BackLeft.isBusy()) // while anything is busy
+        ) {
+        }
+        FrontRight.setPower(0);
+        BackRight.setPower(0);
+        FrontLeft.setPower(0);
+        BackLeft.setPower(0);
+        extendArm.setPower(0);
+        liftArm.setPower(0);
+        angleArm.setPower(0);
+    }
+
     protected void drive(double FrontRightTarget, double BackRightTarget,
-                       double FrontLeftTarget, double BackLeftTarget, double Speed) {
+                         double FrontLeftTarget, double BackLeftTarget, double Speed) {
 
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
         FrontRightPos += FrontRightTarget;
@@ -98,7 +146,7 @@ public abstract class BaseAuto extends LinearOpMode {
         BackLeft.setPower(Speed);
         while (opModeIsActive() &&
                 (FrontRight.isBusy() && BackRight.isBusy() && FrontLeft.isBusy() && BackLeft.isBusy()) // while everything is busy
-               // (FrontRight.isBusy() || BackRight.isBusy() || FrontLeft.isBusy() || BackLeft.isBusy()) // while anything is busy
+            // (FrontRight.isBusy() || BackRight.isBusy() || FrontLeft.isBusy() || BackLeft.isBusy()) // while anything is busy
         ) {
             // Do nothing
         }
@@ -113,11 +161,10 @@ public abstract class BaseAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-         Map();
+        Map();
 
         waitForStart();
-        if (opModeIsActive())
-        {
+        if (opModeIsActive()) {
             PrepMotor();
             RunOpModeInnerLoop();
         }
