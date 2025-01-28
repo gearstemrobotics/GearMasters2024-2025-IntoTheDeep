@@ -79,8 +79,8 @@ public abstract class BaseAuto extends LinearOpMode {
         angleArm.setPower(0);
     }
 
-    protected void everything(double ExtendArmTarget, double LiftArmTarget, double AngleArmTarget, double FrontRightTarget, double BackRightTarget,
-                              double FrontLeftTarget, double BackLeftTarget, double Speed) {
+    protected void everything( double FrontRightTarget, double BackRightTarget,
+                              double FrontLeftTarget, double BackLeftTarget, double ExtendArmTarget, double LiftArmTarget, double AngleArmTarget, double Speed) {
         extendPos += ExtendArmTarget;
         liftPos += LiftArmTarget;
         anglePos += AngleArmTarget;

@@ -1,4 +1,13 @@
 package org.firstinspires.ftc.teamcode;
+//  package org.firstinspires.ftc.teamcode.processors;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+ import org.firstinspires.ftc.vision.VisionProcessor;
+ import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+
 
 import android.os.Build;
 
@@ -36,8 +45,18 @@ public class CameraTest extends OpMode {
     public void init_loop() {
         LoopCount++;
 
-        telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
+        AddTelemtry();
+    }
+
+    private void AddTelemtry() {
+        telemetry.addData("x", String.format("%.2f", cameraMonitor.GetX()));
+        telemetry.addData("y", String.format("%.2f", cameraMonitor.GetY()));
+        telemetry.addData("z", String.format("%.2f", cameraMonitor.GetZ()));
+        telemetry.addData("roll", String.format("%.2f", cameraMonitor.GetRoll()));
+        telemetry.addData("pitch", String.format("%.2f", cameraMonitor.GetPitch()));
+        telemetry.addData("yaw", String.format("%.2f", cameraMonitor.GetYaw()));
         telemetry.addData("LoopCount", LoopCount);
+        telemetry.update();
     }
 
     @Override
@@ -48,8 +67,7 @@ public class CameraTest extends OpMode {
     @Override
     public void loop() {
         LoopCount++;
-
-        telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
-        telemetry.addData("LoopCount", LoopCount);
+       // if (cameraMonitor.GetX() < 0){}
+        AddTelemtry();
     }
 }

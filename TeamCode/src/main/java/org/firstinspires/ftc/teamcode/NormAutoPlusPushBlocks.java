@@ -16,7 +16,7 @@ public class NormAutoPlusPushBlocks extends BaseAuto {
         //Drive + arm  at same time
         arm(0, -hex_motor_ticks * 11, 0, 1);
         // Moves to the wall
-        everything(0,hex_motor_ticks * 12,0,-hex_motor_ticks * 9,hex_motor_ticks * 9,hex_motor_ticks * 9,-hex_motor_ticks * 9, 0.7);
+        everything(-hex_motor_ticks * 9,hex_motor_ticks * 9,hex_motor_ticks * 9,-hex_motor_ticks * 9,0,-hex_motor_ticks * 11,0, 0.7);
         //Moves back a little bit
         drive(hex_motor_ticks * 3.5, -hex_motor_ticks * 3.5, -hex_motor_ticks * 3.5, hex_motor_ticks * 7, 0.3);
         //Moves a little bit towards the blocks
