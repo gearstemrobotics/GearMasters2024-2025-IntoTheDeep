@@ -80,7 +80,9 @@ public abstract class BaseAuto extends LinearOpMode {
     }
 
     protected void everything( double FrontRightTarget, double BackRightTarget,
-                              double FrontLeftTarget, double BackLeftTarget, double ExtendArmTarget, double LiftArmTarget, double AngleArmTarget, double Speed) {
+                              double FrontLeftTarget, double BackLeftTarget,
+                               double ExtendArmTarget, double LiftArmTarget,
+                               double AngleArmTarget, double ArmSpeed, double WheelSpeed) {
         extendPos += ExtendArmTarget;
         liftPos += LiftArmTarget;
         anglePos += AngleArmTarget;
@@ -90,9 +92,9 @@ public abstract class BaseAuto extends LinearOpMode {
         extendArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         angleArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        extendArm.setPower(Speed);
-        liftArm.setPower(Speed);
-        angleArm.setPower(Speed);
+        extendArm.setPower(ArmSpeed);
+        liftArm.setPower(ArmSpeed);
+        angleArm.setPower(ArmSpeed);
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
         FrontRightPos += FrontRightTarget;
         BackRightPos += BackRightTarget;
@@ -106,10 +108,10 @@ public abstract class BaseAuto extends LinearOpMode {
         BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRight.setPower(Speed);
-        BackRight.setPower(Speed);
-        FrontLeft.setPower(Speed);
-        BackLeft.setPower(Speed);
+        FrontRight.setPower(WheelSpeed);
+        BackRight.setPower(WheelSpeed);
+        FrontLeft.setPower(WheelSpeed);
+        BackLeft.setPower(WheelSpeed);
         while (opModeIsActive() &&
                 // (FrontRight.isBusy() && BackRight.isBusy() && FrontLeft.isBusy() && BackLeft.isBusy()) // while everything is busy
                 (extendArm.isBusy() || liftArm.isBusy() || angleArm.isBusy() || FrontRight.isBusy() || BackRight.isBusy() || FrontLeft.isBusy() || BackLeft.isBusy()) // while anything is busy

@@ -1,20 +1,22 @@
 
+
 package org.firstinspires.ftc.teamcode;
 
         import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous
-public class NormAutoPlusPushBlocks extends BaseAuto {
+public class NormAutoPlusPushBlocksLowClimb extends BaseAuto {
 
 
     @Override
     public void RunOpModeInnerLoop() {
         int hex_motor_ticks = 288;
-       // arm(0, hex_motor_ticks * 12, 0, 0.7);
+        // arm(0, hex_motor_ticks * 12, 0, 0.7);
 
         //drive(-hex_motor_ticks * 9 , hex_motor_ticks * 9, hex_motor_ticks * 9, -hex_motor_ticks * 9, 0.7);
         //Drive + arm  at same time
-        everything(-hex_motor_ticks * 9,hex_motor_ticks * 9,hex_motor_ticks * 9,-hex_motor_ticks * 9,0,hex_motor_ticks * 12,0, 1,0.4);
+        everything(-hex_motor_ticks * 9,hex_motor_ticks * 9,hex_motor_ticks * 9,-hex_motor_ticks * 9,
+                0,hex_motor_ticks * 12,0, 1,0.4);
         arm(0, -hex_motor_ticks * 11, 0, 1);
         // Moves to the wall
         //Moves back a little bit
@@ -31,8 +33,20 @@ public class NormAutoPlusPushBlocks extends BaseAuto {
         drive(-hex_motor_ticks * 1.3, -hex_motor_ticks * 1.3, hex_motor_ticks * 1.3, hex_motor_ticks * 1.3, 0.3);
 
         //delivers
-        drive(hex_motor_ticks * 5.5, -hex_motor_ticks * 5.5, -hex_motor_ticks * 5.5, hex_motor_ticks * 5.5, 1);
+        everything(-hex_motor_ticks * 5.5,hex_motor_ticks * 5.5,hex_motor_ticks * 5.5,-hex_motor_ticks * 5.5,
+                0,hex_motor_ticks * 5,0, 1,1);
+        //back
+        drive(-hex_motor_ticks * 4.5, -hex_motor_ticks * 4.5, -hex_motor_ticks * 4.5, -hex_motor_ticks * 4.5, 1);
+        //strafe right
+        drive(-hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, 1);
+        //turn
+        drive(-hex_motor_ticks * 3.5, -hex_motor_ticks * 3.5, hex_motor_ticks * 3.5, hex_motor_ticks * 3.5, 1);
+        //strafe right
+        drive(-hex_motor_ticks * 4, hex_motor_ticks * 4, hex_motor_ticks * 4, -hex_motor_ticks * 4, 1);
+        //drive(hex_motor_ticks * 5.5, -hex_motor_ticks * 5.5, -hex_motor_ticks * 5.5, hex_motor_ticks * 5.5, 1);
         //bring arm down reset
-        arm(0, -hex_motor_ticks * 11, 0, 0.5);
+        //arm(0, -hex_motor_ticks * 11, 0, 0.5);
+        //attempts to climb now
+
     }
 }

@@ -16,7 +16,7 @@ public class DeepDrive extends LinearOpMode {
 
 
     //RevBlinkinLedDriver blinkinLedDriver;
-    private Servo gripper;
+    private CRServo gripper;
     private CRServo gripper2;
 
     private TouchSensor TouchSen;
@@ -78,7 +78,7 @@ public class DeepDrive extends LinearOpMode {
         TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
         magSen = hardwareMap.get(TouchSensor.class, "magSen");
         color = hardwareMap.get(ColorSensor.class, "Color");
-        gripper = hardwareMap.get(Servo.class, "gripper");
+        gripper = hardwareMap.get(CRServo.class, "gripper");
         gripper2 = hardwareMap.get(CRServo.class, "gripper2");
         color = hardwareMap.get(ColorSensor.class, "Color");
         gripper.resetDeviceConfigurationForOpMode();
@@ -182,11 +182,14 @@ public class DeepDrive extends LinearOpMode {
                     //power4 = gamepad2.left_trigger;
                     //gamepad2.rumble(100);
                     gripper2.setPower(1);
+                    gripper.setPower(-1);
                 } else if (gamepad2.right_trigger > 0) {
                     gripper2.setPower(-1);
+                    gripper.setPower( 1);
                 }
                 else {
                     gripper2.setPower(0);
+                    gripper.setPower(0);
                 }
                 if (gamepad2.a)
                 {
