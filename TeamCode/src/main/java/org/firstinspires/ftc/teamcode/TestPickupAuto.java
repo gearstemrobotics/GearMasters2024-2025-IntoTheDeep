@@ -11,8 +11,8 @@ public class TestPickupAuto extends BaseAuto {
     public void RunOpModeInnerLoop() {
 
         int hex_motor_ticks = 288;
-        //arm(0, 0, -hex_motor_ticks * 1.7, 0.5);
-        arm(hex_motor_ticks * 11, 0, -hex_motor_ticks * 1.7, 1 );
+        // arm(0, 0, -hex_motor_ticks * 1.7, 0.5);
+        arm(hex_motor_ticks * 8, 0, -hex_motor_ticks * 1.7, 1 );
         drive(hex_motor_ticks * 1.5, hex_motor_ticks * 1.5, hex_motor_ticks * 1.5, hex_motor_ticks * 1.5, 1);
         //place it in the basket
         gripper2.setPower(-1);

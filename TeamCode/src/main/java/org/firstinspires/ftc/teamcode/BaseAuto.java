@@ -27,6 +27,7 @@ public abstract class BaseAuto extends LinearOpMode {
     protected DcMotor liftArm;
     protected DcMotor angleArm;
     protected CRServo gripper2;
+    protected CRServo gripper;
 
 
     int anglePos;
@@ -182,6 +183,7 @@ public abstract class BaseAuto extends LinearOpMode {
         liftArm = hardwareMap.get(DcMotor.class, "liftArm");
         angleArm = hardwareMap.get(DcMotor.class, "angleArm");
         gripper2 = hardwareMap.get(CRServo.class, "gripper2");
+        gripper = hardwareMap.get(CRServo.class, "gripper");
         //blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 

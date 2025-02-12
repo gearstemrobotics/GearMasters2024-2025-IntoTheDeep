@@ -17,6 +17,8 @@ import org.opencv.core.Rect;
 import android.os.Build;
 import android.util.Size;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -29,6 +31,8 @@ public class CameraMonitor implements Runnable {
     private boolean isRunning = true;
 
     private StringBuilder lastIdsFound = new StringBuilder();
+
+
 
     public CameraMonitor(WebcamName webcamName) {
         aprilTagProcessor = new AprilTagProcessor.Builder()
@@ -48,8 +52,15 @@ public class CameraMonitor implements Runnable {
     public void run() {
 
         while (isRunning) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
             StringBuilder idsFound = new StringBuilder();
+
+
 
             if (currentDetections.size() > 0)
             {
@@ -71,6 +82,11 @@ public class CameraMonitor implements Runnable {
                 _pitch= Double.NaN;
                 _yaw =  Double.NaN;
                 idsFound.append("");
+
+                if (_y > 20)
+                {
+
+                }
 
             }
 

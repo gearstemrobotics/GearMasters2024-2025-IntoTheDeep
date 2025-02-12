@@ -8,9 +8,9 @@ public class BackGroundMech implements Runnable {
     private boolean isRunning = true;
 
     private DcMotor BackLeft;
-    private DcMotor FrontRight;
-    private DcMotor FrontLeft;
 
+    private DcMotor FrontLeft;
+    private DcMotor FrontRight;
     private DcMotor BackRight;
     private Gamepad GP;
 
@@ -27,7 +27,7 @@ public class BackGroundMech implements Runnable {
 
     @Override
     public void run() {
-        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+         FrontLeft.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
        // BackLeft.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);

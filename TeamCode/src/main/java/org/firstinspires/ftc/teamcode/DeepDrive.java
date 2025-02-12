@@ -19,9 +19,9 @@ public class DeepDrive extends LinearOpMode {
     private CRServo gripper;
     private CRServo gripper2;
 
-    private TouchSensor TouchSen;
+   // private TouchSensor TouchSen;
 
-    private TouchSensor magSen;
+   // private TouchSensor magSen;
     private ColorSensor color;
 
     private DcMotor BackLeft;
@@ -29,10 +29,11 @@ public class DeepDrive extends LinearOpMode {
     private DcMotor FrontLeft;
 
     private DcMotor BackRight;
-
-    private DcMotor extendArm;
     private DcMotor liftArm;
     private DcMotor angleArm;
+    private DcMotor extendArm;
+
+
     private DcMotor climbArm;
 
     private boolean useExpanasionHub = true;
@@ -54,6 +55,7 @@ public class DeepDrive extends LinearOpMode {
                 hardwareMap.get(DcMotor.class, "FrontLeft"),
                 hardwareMap.get(DcMotor.class, "BackRight"),
                 hardwareMap.get(DcMotor.class, "BackLeft"));
+
         Thread t1 = new Thread(task, "t1");
 
 
@@ -75,8 +77,8 @@ public class DeepDrive extends LinearOpMode {
         angleArm = hardwareMap.get(DcMotor.class, "angleArm");
         climbArm = hardwareMap.get(DcMotor.class, "climbArm");
 
-        TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
-        magSen = hardwareMap.get(TouchSensor.class, "magSen");
+       // TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
+       // magSen = hardwareMap.get(TouchSensor.class, "magSen");
         color = hardwareMap.get(ColorSensor.class, "Color");
         gripper = hardwareMap.get(CRServo.class, "gripper");
         gripper2 = hardwareMap.get(CRServo.class, "gripper2");
@@ -86,9 +88,9 @@ public class DeepDrive extends LinearOpMode {
 
 
         waitForStart();
-        t1.start();
+        //t1.start();
         if (opModeIsActive()) {
-            // t1.start();
+             t1.start();
             while (opModeIsActive()) {
 
 
@@ -161,9 +163,9 @@ public class DeepDrive extends LinearOpMode {
 
 
                 // touch sen
-                if (TouchSen.isPressed() || magSen.isPressed()) {
-                    power = 0;
-                }
+               // if (TouchSen.isPressed() || magSen.isPressed()) {
+                //    power = 0;
+               // }
 
 
                 extendArm.setPower(power);
@@ -181,11 +183,11 @@ public class DeepDrive extends LinearOpMode {
                 {
                     //power4 = gamepad2.left_trigger;
                     //gamepad2.rumble(100);
-                    gripper2.setPower(1);
-                    gripper.setPower(-1);
-                } else if (gamepad2.right_trigger > 0) {
                     gripper2.setPower(-1);
-                    gripper.setPower( 1);
+                    gripper.setPower(1);
+                } else if (gamepad2.right_trigger > 0) {
+                    gripper2.setPower(1);
+                    gripper.setPower( -1);
                 }
                 else {
                     gripper2.setPower(0);
@@ -234,8 +236,8 @@ public class DeepDrive extends LinearOpMode {
                 telemetry.addData("power", power);
                 telemetry.addData("power2", power2);
                 telemetry.addData("power3", power3);
-                telemetry.addData("Touched", TouchSen.getValue());
-                telemetry.addData("Touched Magnet", magSen.getValue());
+               // telemetry.addData("Touched", TouchSen.getValue());
+               // telemetry.addData("Touched Magnet", magSen.getValue());
                 telemetry.addData("Red", color.red());
                 telemetry.addData("Green", color.green());
                 telemetry.addData("Blue", color.blue());

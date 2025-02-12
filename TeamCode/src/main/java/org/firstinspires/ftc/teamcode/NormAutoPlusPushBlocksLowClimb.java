@@ -35,14 +35,13 @@ public class NormAutoPlusPushBlocksLowClimb extends BaseAuto {
         //delivers
         everything(-hex_motor_ticks * 5.5,hex_motor_ticks * 5.5,hex_motor_ticks * 5.5,-hex_motor_ticks * 5.5,
                 0,hex_motor_ticks * 5,0, 1,1);
-        //back
-        drive(-hex_motor_ticks * 4.5, -hex_motor_ticks * 4.5, -hex_motor_ticks * 4.5, -hex_motor_ticks * 4.5, 1);
+
         //strafe right
         drive(-hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8, 1);
         //turn
         drive(-hex_motor_ticks * 3.5, -hex_motor_ticks * 3.5, hex_motor_ticks * 3.5, hex_motor_ticks * 3.5, 1);
         //strafe right
-        drive(-hex_motor_ticks * 4, hex_motor_ticks * 4, hex_motor_ticks * 4, -hex_motor_ticks * 4, 1);
+        drive(-hex_motor_ticks * 6, hex_motor_ticks * 6, hex_motor_ticks * 6, -hex_motor_ticks * 6, 1);
         //drive(hex_motor_ticks * 5.5, -hex_motor_ticks * 5.5, -hex_motor_ticks * 5.5, hex_motor_ticks * 5.5, 1);
         //bring arm down reset
         //arm(0, -hex_motor_ticks * 11, 0, 0.5);

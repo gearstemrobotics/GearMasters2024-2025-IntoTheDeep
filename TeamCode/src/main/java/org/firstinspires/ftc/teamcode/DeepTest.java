@@ -15,6 +15,10 @@ public class DeepTest extends LinearOpMode {
 
     private DcMotor BackRight;
 
+    private DcMotor liftArm;
+    private DcMotor angleArm;
+    private DcMotor extendArm;
+
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -32,10 +36,12 @@ public class DeepTest extends LinearOpMode {
         FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
         FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
         BackRight = hardwareMap.get(DcMotor.class, "BackRight");
+        extendArm = hardwareMap.get(DcMotor.class, "extendArm");
+        liftArm = hardwareMap.get(DcMotor.class, "liftArm");
+        angleArm = hardwareMap.get(DcMotor.class, "angleArm");
 
-
-        BackRight.setDirection(DcMotor.Direction.REVERSE);
-
+       // BackRight.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
         hex_motor_ticks = 288;
         Right_Arm = 0;
         Left_Arm = 0;
@@ -56,6 +62,10 @@ public class DeepTest extends LinearOpMode {
 
                 if (gamepad1.y) {
                     FrontRight.setPower(1);
+                }
+                if (gamepad2.a)
+                {
+                  angleArm.setPower(1);
                 }
             }
         }
