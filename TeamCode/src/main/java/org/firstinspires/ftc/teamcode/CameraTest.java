@@ -29,6 +29,7 @@ import org.opencv.android.CameraRenderer;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 
 
@@ -44,10 +45,8 @@ public class CameraTest extends OpMode {
     private CRServo gripper;
 
 
-
     @Override
     public void init() {
-
 
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
@@ -66,7 +65,7 @@ public class CameraTest extends OpMode {
         LoopCount++;
         FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
         FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
-       BackRight = hardwareMap.get(DcMotor.class, "BackRight");
+        BackRight = hardwareMap.get(DcMotor.class, "BackRight");
         BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
         gripper = gripper = hardwareMap.get(CRServo.class, "gripper");
         AddTelemtry();
@@ -92,6 +91,7 @@ public class CameraTest extends OpMode {
 
     @Override
     public void loop() {
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
         //BackLeft.setDirection(DcMotor.Direction.REVERSE);
         LoopCount++;
         // if (cameraMonitor.GetX() < 0){}
@@ -102,70 +102,103 @@ public class CameraTest extends OpMode {
         double power1 = 0;
         double power2 = 0;
         double power3 = 0;
+        double seeNoPower = 0;
         boolean isStrafe = false;
+        boolean isFor = false;
         boolean isTurn = false;
+        String setStatus = "nothing";
 
 
-
-        //Strafe X
-        if (Double.isNaN(X))
-        {
-            power2 = 0;
-        }
-        else if (X >=  13)
-        {
-            power2 = 0.5;
-            isStrafe = true;
-        }
-        else
-        {
-            power2 = 0.1;
-            isStrafe= true;
+        // forward back X
+        if (Double.isNaN(X)) {
+            power1 = 0;
+            isFor = false;
+        } else if (X >= 3) {
+            //move back
+            power1 = 0.3;
+            isFor = true;
+            setStatus = "Forward";
+        } else if (X < -3) {
+            // move forward
+            power1 = - 0.3;
+            isFor = true;
+            setStatus = "Back";
+        } else {
+            power1 = 0;
+            isFor = false;
         }
 
         //Turn Yaw
-        if (Double.isNaN(Yaw))
-        {
+        if (Double.isNaN(Yaw) || isFor) {
+            power2 = 0;
+        } else if (Yaw >= 5) {
+            power2 = 0.3;
+            isTurn = true;
+            setStatus = "turn";
+        } else if (Yaw <= -5) {
+            power2 = -0.3;
+            isTurn = true;
+            setStatus = "Turn";
+        } else {
+            power2 = 0;
+            isTurn = false;
+        }
+
+
+        //Strafe Y
+        if (Double.isNaN(Y) || isFor || isTurn) {
             power3 = 0;
-        }
-        else if (Yaw >=  13)
-        {
-            power3 = 0.5;
-        }
-        else
-        {
-            power3 = 0.1;
+        } else if (Y >= 13) {
+            power3 = -0.3;
+            isStrafe = true;
+            setStatus = "Target";
+        } else {
+            power3 = 0;
+
         }
 
-
-        //Forward or Backwards Y
-        if (Double.isNaN(Y))
-        {
-            power1 = 0;
-        }
-        else if (Y >=  13)
-        {
-            power1 = 0.5;
-        }
-        else
-        {
-            power1 = 0.1;
-        }
-
-        if(isStrafe)
-        {
+        if (Double.isNaN(Y) && Double.isNaN(X) && Double.isNaN(Yaw)) {
             // zeroout turn and
-
+            seeNoPower = 0.1;
+        } else {
+            seeNoPower = 0;
+        }
+        //Power 1 = 1st set For/ Back
+        if (isFor) {
+            FrontLeft.setPower(power1);
+            BackLeft.setPower(power1);
+            BackRight.setPower(power1);
+            FrontRight.setPower(power1);
         }
 
-        FrontLeft.setPower(power1);
-        // forward/back or y
-        gripper.setPower(power2);
-        // strafe or x
-        BackLeft.setPower(power3);
-        // = Turn or yaw
-       // BackRight.setPower(power);
-        //FrontRight.setPower(power);
+        //power 2 = second set turn
+        else if (isTurn) {
+            FrontLeft.setPower(-power2);
+            BackLeft.setPower(-power2);
+            BackRight.setPower(power2);
+            FrontRight.setPower(power1);
+        }
+
+        //power 3 = third set that strafe to target
+        else if (isStrafe) {
+            FrontLeft.setPower(power3);
+            BackLeft.setPower(-power3);
+            BackRight.setPower(power3);
+            FrontRight.setPower(-power3);
+        }
+
+        // seeNoPower = nothing is see just goes in circles
+        else {
+            FrontLeft.setPower(seeNoPower);
+            BackLeft.setPower(seeNoPower);
+            BackRight.setPower(-seeNoPower);
+            FrontRight.setPower(-seeNoPower);
+
+
+        }
+        telemetry.addData(setStatus,"status");
+        telemetry.update();
+
     }
 }
 //
