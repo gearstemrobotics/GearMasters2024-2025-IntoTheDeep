@@ -26,8 +26,8 @@ import org.opencv.imgproc.Imgproc;
 import java.util.List;
 
 public class CameraMonitor implements Runnable {
-    private AprilTagProcessor aprilTagProcessor;
-    private VisionPortal visionPortal;
+    private final AprilTagProcessor aprilTagProcessor;
+    private final VisionPortal visionPortal;
     private boolean isRunning = true;
 
     private StringBuilder lastIdsFound = new StringBuilder();
@@ -41,7 +41,7 @@ public class CameraMonitor implements Runnable {
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
                 .build();
-        VisionPortal visionPortal = new VisionPortal.Builder()
+        visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTagProcessor)
                 .setCamera(webcamName)
                 .setCameraResolution(new Size(640, 480))
@@ -65,7 +65,7 @@ public class CameraMonitor implements Runnable {
             if (currentDetections.size() > 0)
             {
                 AprilTagDetection d = currentDetections.get(0);
-                _x = d.ftcPose.x;
+                _x = CalculateX(d.ftcPose.y, d.ftcPose.yaw);
                 _y = d.ftcPose.y;
                 _z = d.ftcPose.z;
                 _roll = d.ftcPose.roll;
@@ -82,12 +82,6 @@ public class CameraMonitor implements Runnable {
                 _pitch= Double.NaN;
                 _yaw =  Double.NaN;
                 idsFound.append("");
-
-                if (_y > 20)
-                {
-
-                }
-
             }
 
 
@@ -95,16 +89,22 @@ public class CameraMonitor implements Runnable {
         }
     }
 
+    private double CalculateX(double y, double yaw) {
+        // x is so wrong, calculate instead
+        return Math.tan(Math.toRadians(yaw)) * y;
+    }
+
     public StringBuilder GetIdsFound() {
         return lastIdsFound;
     }
 
-    double _x = Double.NaN;
-    double _y = Double.NaN;
-    double _z = Double.NaN;
-    double _roll = Double.NaN;
-    double _pitch = Double.NaN;
-    double _yaw = Double.NaN;
+    volatile double _x = Double.NaN;
+    volatile double _y = Double.NaN;
+    volatile double _z = Double.NaN;
+    volatile double _roll = Double.NaN;
+    volatile double _pitch = Double.NaN;
+    volatile double _yaw = Double.NaN;
+
     public double GetX(){ return _x; }
     public double GetY(){ return _y; }
     public double GetZ(){ return _z; }

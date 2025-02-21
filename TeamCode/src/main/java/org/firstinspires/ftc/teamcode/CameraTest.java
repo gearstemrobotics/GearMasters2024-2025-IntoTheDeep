@@ -34,19 +34,19 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 
 @Autonomous()
-public class CameraTest extends OpMode {
+public class CameraTest extends BaseAuto {
 
     private CameraMonitor cameraMonitor;
-    private DcMotor BackLeft;
-    private DcMotor FrontRight;
-    private DcMotor FrontLeft;
+    public CameraTest()
+    {
+    }
 
-    private DcMotor BackRight;
-    private CRServo gripper;
-
+    int LoopCount = 0;
 
     @Override
-    public void init() {
+    protected void Map()
+    {
+        super.Map(); // call base class map first
 
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
@@ -54,26 +54,9 @@ public class CameraTest extends OpMode {
         cameraMonitor = new CameraMonitor(webcamName);
         Thread t1 = new Thread(cameraMonitor, "t1");
         t1.start();
-
-
-    }
-
-    int LoopCount = 0;
-
-    @Override
-    public void init_loop() {
-        LoopCount++;
-        FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
-        FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
-        BackRight = hardwareMap.get(DcMotor.class, "BackRight");
-        BackLeft = hardwareMap.get(DcMotor.class, "BackLeft");
-        gripper = gripper = hardwareMap.get(CRServo.class, "gripper");
-        AddTelemtry();
     }
 
     private void AddTelemtry() {
-
-
         telemetry.addData("x", String.format("%.2f", cameraMonitor.GetX()));
         telemetry.addData("y", String.format("%.2f", cameraMonitor.GetY()));
         telemetry.addData("z", String.format("%.2f", cameraMonitor.GetZ()));
@@ -85,10 +68,45 @@ public class CameraTest extends OpMode {
     }
 
     @Override
-    public void start() {
+    protected void RunOpModeInnerLoop() {
+        // kickoff thread for camera here
+        boolean hasJumped = false;
 
+        while (opModeIsActive())
+        {
+            LoopCount++;
+            AddTelemtry();
+            telemetry.update();
+
+            try {
+                JumpToAprilTag();
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                // ignore this
+            }
+
+
+
+
+
+            /*
+            if (AprilTagHoming() && !hasJumped)
+            {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                JumpToAprilTag();
+                hasJumped = true;
+                break;
+            }
+            */
+
+        }
     }
 
+    /*
     @Override
     public void loop() {
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -96,6 +114,22 @@ public class CameraTest extends OpMode {
         LoopCount++;
         // if (cameraMonitor.GetX() < 0){}
         AddTelemtry();
+
+        if (AprilTagHoming())
+        {
+            JumpToAprilTag();
+        }
+    }
+    */
+
+    private boolean AprilTagHoming() {
+        // switch to power mode
+        FrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
         double Y = cameraMonitor.GetY();
         double X = cameraMonitor.GetX();
         double Yaw = cameraMonitor.GetYaw();
@@ -103,6 +137,9 @@ public class CameraTest extends OpMode {
         double power2 = 0;
         double power3 = 0;
         double seeNoPower = 0;
+        double Xlimit = 3;
+        double Yawlimit = 5;
+
         boolean isStrafe = false;
         boolean isFor = false;
         boolean isTurn = false;
@@ -113,14 +150,14 @@ public class CameraTest extends OpMode {
         if (Double.isNaN(X)) {
             power1 = 0;
             isFor = false;
-        } else if (X >= 3) {
+        } else if (X >= Xlimit) {
             //move back
             power1 = 0.3;
             isFor = true;
             setStatus = "Forward";
-        } else if (X < -3) {
+        } else if (X < -Xlimit) {
             // move forward
-            power1 = - 0.3;
+            power1 = -0.3;
             isFor = true;
             setStatus = "Back";
         } else {
@@ -131,11 +168,11 @@ public class CameraTest extends OpMode {
         //Turn Yaw
         if (Double.isNaN(Yaw) || isFor) {
             power2 = 0;
-        } else if (Yaw >= 5) {
+        } else if (Yaw >= Yawlimit) {
             power2 = 0.3;
             isTurn = true;
             setStatus = "turn";
-        } else if (Yaw <= -5) {
+        } else if (Yaw <= -Yawlimit) {
             power2 = -0.3;
             isTurn = true;
             setStatus = "Turn";
@@ -152,6 +189,11 @@ public class CameraTest extends OpMode {
             power3 = -0.3;
             isStrafe = true;
             setStatus = "Target";
+      //  } else if (Y <= 11) {
+        //    power3 = 0.3;
+         //   isStrafe = true;
+          //  setStatus = "Target";
+
         } else {
             power3 = 0;
 
@@ -176,7 +218,7 @@ public class CameraTest extends OpMode {
             FrontLeft.setPower(-power2);
             BackLeft.setPower(-power2);
             BackRight.setPower(power2);
-            FrontRight.setPower(power1);
+            FrontRight.setPower(power2);
         }
 
         //power 3 = third set that strafe to target
@@ -196,9 +238,36 @@ public class CameraTest extends OpMode {
 
 
         }
-        telemetry.addData(setStatus,"status");
+        telemetry.addData(setStatus, "status");
         telemetry.update();
+        // try {
+        // Thread.sleep(50);
+        // } catch (InterruptedException e) {
+        //   throw new RuntimeException(e);
+        // }
 
+        return !(Double.isNaN(Y) && Double.isNaN(X) && Double.isNaN(Yaw));
+    }
+
+    void JumpToAprilTag()
+    {
+        double Y = cameraMonitor.GetY();
+        Y = Y - 13;
+        double X = cameraMonitor.GetX();
+        double Yaw = cameraMonitor.GetYaw();
+        int hex_motor_ticks = 288;
+        int turnYaw = (int)(Yaw * -13.5);
+        int forX = (int)(X * 60.0);
+        int strafeY = (int)(Y * -60.0);
+        // rotate by yaw
+        drive(-turnYaw * 1,-turnYaw * 1,turnYaw * 1,turnYaw * 1,0.3);
+
+        // move in X
+        //drive(hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.3);
+        drive(forX * 1,forX * 1,forX * 1,forX * 1,0.3);
+        // move in Y
+
+        drive(-strafeY * 1,strafeY * 1,strafeY * 1,-strafeY * 1,0.3);
     }
 }
 //
