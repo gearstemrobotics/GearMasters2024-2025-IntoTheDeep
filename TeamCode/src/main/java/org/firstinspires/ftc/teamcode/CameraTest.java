@@ -1,36 +1,8 @@
 package org.firstinspires.ftc.teamcode;
-//  package org.firstinspires.ftc.teamcode.processors;
-
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
-import org.firstinspires.ftc.vision.VisionProcessor;
-import org.opencv.core.Mat;
-import org.opencv.core.Rect;
-
-
-import android.os.Build;
-
-import androidx.fragment.app.FragmentContainer;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.opencv.android.CameraRenderer;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-
-import com.qualcomm.robotcore.hardware.CRServo;
 
 
 @Autonomous()
@@ -57,15 +29,28 @@ public class CameraTest extends BaseAuto {
     }
 
     private void AddTelemtry() {
+        telemetry.addData("state", state.toString());
+        telemetry.addData("x(calc)", String.format("%.2f", cameraMonitor.GetCalculatedX()));
         telemetry.addData("x", String.format("%.2f", cameraMonitor.GetX()));
         telemetry.addData("y", String.format("%.2f", cameraMonitor.GetY()));
         telemetry.addData("z", String.format("%.2f", cameraMonitor.GetZ()));
-        telemetry.addData("roll", String.format("%.2f", cameraMonitor.GetRoll()));
-        telemetry.addData("pitch", String.format("%.2f", cameraMonitor.GetPitch()));
         telemetry.addData("yaw", String.format("%.2f", cameraMonitor.GetYaw()));
+        telemetry.addData("range", String.format("%.2f", cameraMonitor.GetRange()));
+        telemetry.addData("bearing", String.format("%.2f", cameraMonitor.GetBearing()));
         telemetry.addData("LoopCount", LoopCount);
         telemetry.update();
     }
+
+    public enum HomingState
+    {
+        WaitForCamera,
+        ScanForTag,
+        HeadToTag,
+        CenterOnTag,
+        FineTune,
+    }
+
+    HomingState state = HomingState.WaitForCamera;
 
     @Override
     protected void RunOpModeInnerLoop() {
@@ -77,50 +62,109 @@ public class CameraTest extends BaseAuto {
             LoopCount++;
             AddTelemtry();
             telemetry.update();
-
-            try {
-                JumpToAprilTag();
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // ignore this
-            }
-
-
-
-
-
-            /*
-            if (AprilTagHoming() && !hasJumped)
-            {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            if (cameraMonitor.IsReady()) {
+                //AprilTagHoming();
+                if (state == HomingState.WaitForCamera)
+                {
+                    Sleep(2000);
+                    state = HomingState.ScanForTag;
                 }
-                JumpToAprilTag();
-                hasJumped = true;
-                break;
+                else if (state == HomingState.ScanForTag)
+                {
+                    scanForTag();
+                    // wait a bit to make sure tag refreshes
+                    Sleep(500);
+
+                    // only stop scanning if we found it
+                    if (cameraMonitor.GetPose() != null) {
+                        state = HomingState.HeadToTag;
+                    }
+                }
+                else if (state == HomingState.HeadToTag) {
+                    GoToAprilTag();
+                    if (cameraMonitor.GetRange() < 15 || Math.abs(cameraMonitor.GetYaw()) > 55)
+                    {
+                        state = HomingState.CenterOnTag;
+
+                        // wait a bit to make sure tag refreshes
+                        Sleep(500);
+                    }
+                }
+                else if (state == HomingState.CenterOnTag)
+                {
+                    JumpToAprilTag();
+                    if (Math.abs(cameraMonitor.GetYaw()) < 2)
+                    {
+                        state = HomingState.FineTune;
+
+                        // wait a bit to make sure tag refreshes
+                        Sleep(500);
+                    }
+                }
+                else if (state == HomingState.FineTune)
+                {
+                    AprilTagHoming();
+
+                    if (IsHomed())
+                    {
+                        // break out of the loop, we are done
+                        break;
+
+                        /*
+                        // lets see how we did!
+                        Sleep(5000);
+                        // rotate 180 and kick off the search again
+                        drive(-1000,-1000,1000,10000,0.5);
+                        state = HomingState.ScanForTag;
+                        */
+                    }
+
+                }
             }
-            */
-
         }
     }
 
-    /*
-    @Override
-    public void loop() {
-        BackLeft.setDirection(DcMotor.Direction.REVERSE);
-        //BackLeft.setDirection(DcMotor.Direction.REVERSE);
-        LoopCount++;
-        // if (cameraMonitor.GetX() < 0){}
-        AddTelemtry();
+    public void Sleep(long milliseconds)
+    {
+        try { Thread.sleep(milliseconds); } catch (InterruptedException e) { }
+    }
 
-        if (AprilTagHoming())
-        {
-            JumpToAprilTag();
+    public boolean IsHomed()
+    {
+        AprilTagPoseFtc pose = cameraMonitor.GetPose();
+        if (pose != null) {
+
+            double y = pose.y;
+            double yaw = Math.abs(pose.yaw);
+            if (y < 13 && y > 11 && yaw < 4) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void scanForTag() {
+        int hex_motor_ticks = 56;
+        while (true) {
+            if (cameraMonitor.GetPose() != null) {
+                return;
+            }
+
+            for (int i = 0; i < 10; i++) {
+                drive(-hex_motor_ticks * 2, -hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.5);
+                if (cameraMonitor.GetPose() != null) {
+                    return;
+                }
+            }
+
+            for (int i = 0; i < 20; i++) {
+                drive(hex_motor_ticks * 2, hex_motor_ticks * 2, -hex_motor_ticks * 2, -hex_motor_ticks * 2, 0.5);
+                if (cameraMonitor.GetPose() != null) {
+                    return;
+                }
+            }
         }
     }
-    */
 
     private boolean AprilTagHoming() {
         // switch to power mode
@@ -137,8 +181,8 @@ public class CameraTest extends BaseAuto {
         double power2 = 0;
         double power3 = 0;
         double seeNoPower = 0;
-        double Xlimit = 3;
-        double Yawlimit = 5;
+        double Xlimit = 5;
+        double Yawlimit = 4;
 
         boolean isStrafe = false;
         boolean isFor = false;
@@ -189,10 +233,10 @@ public class CameraTest extends BaseAuto {
             power3 = -0.3;
             isStrafe = true;
             setStatus = "Target";
-      //  } else if (Y <= 11) {
-        //    power3 = 0.3;
-         //   isStrafe = true;
-          //  setStatus = "Target";
+        } else if (Y <= 11) {
+            power3 = 0.3;
+            isStrafe = true;
+            setStatus = "Target";
 
         } else {
             power3 = 0;
@@ -238,8 +282,8 @@ public class CameraTest extends BaseAuto {
 
 
         }
-        telemetry.addData(setStatus, "status");
-        telemetry.update();
+        //telemetry.addData(setStatus, "status");
+       // telemetry.update();
         // try {
         // Thread.sleep(50);
         // } catch (InterruptedException e) {
@@ -252,13 +296,14 @@ public class CameraTest extends BaseAuto {
     void JumpToAprilTag()
     {
         double Y = cameraMonitor.GetY();
-        Y = Y - 13;
-        double X = cameraMonitor.GetX();
+        Y = Y - 14;//32;
+        double X = cameraMonitor.GetCalculatedX();
+
         double Yaw = cameraMonitor.GetYaw();
         int hex_motor_ticks = 288;
         int turnYaw = (int)(Yaw * -13.5);
-        int forX = (int)(X * 60.0);
-        int strafeY = (int)(Y * -60.0);
+        int forX = (int)(X * 65.0);
+        int strafeY = (int)(Y * 65.0);
         // rotate by yaw
         drive(-turnYaw * 1,-turnYaw * 1,turnYaw * 1,turnYaw * 1,0.3);
 
@@ -267,7 +312,27 @@ public class CameraTest extends BaseAuto {
         drive(forX * 1,forX * 1,forX * 1,forX * 1,0.3);
         // move in Y
 
-        drive(-strafeY * 1,strafeY * 1,strafeY * 1,-strafeY * 1,0.3);
+          drive(-strafeY * 1,strafeY * 1,strafeY * 1,-strafeY * 1,0.3);
     }
+
+    void GoToAprilTag()
+    {
+        AprilTagPoseFtc pose = cameraMonitor.GetPose();
+        if (pose != null) {
+            double range = pose.range;
+            range = range - 16;
+
+            double bearing = pose.bearing;
+            int hex_motor_ticks = 288;
+            int turn = (int) (bearing * -13.5);
+            int strafe = (int) (range * -40.0);
+
+            // rotate
+            drive(-turn * 1, -turn * 1, turn * 1, turn * 1, 0.3);
+
+            // strafe
+            drive(-strafe * 1, strafe * 1, strafe * 1, -strafe * 1, 0.3);
+        }
+    }
+
 }
-//

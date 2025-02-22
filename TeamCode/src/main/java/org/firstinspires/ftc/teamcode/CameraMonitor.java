@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -31,7 +32,10 @@ public class CameraMonitor implements Runnable {
     private boolean isRunning = true;
 
     private StringBuilder lastIdsFound = new StringBuilder();
-
+    private double fx = 1427.01;
+    private double fy = 1427.01;
+    private double cx = 615.089;
+    private double cy = 344.519;
 
 
     public CameraMonitor(WebcamName webcamName) {
@@ -40,11 +44,13 @@ public class CameraMonitor implements Runnable {
                 .setDrawCubeProjection(true)
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
+                .setLensIntrinsics(fx,fy,cx,cy)
                 .build();
         visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTagProcessor)
                 .setCamera(webcamName)
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(1280, 720))
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .build();
     }
 
@@ -65,22 +71,14 @@ public class CameraMonitor implements Runnable {
             if (currentDetections.size() > 0)
             {
                 AprilTagDetection d = currentDetections.get(0);
+                _pose = d.ftcPose;
                 _x = CalculateX(d.ftcPose.y, d.ftcPose.yaw);
-                _y = d.ftcPose.y;
-                _z = d.ftcPose.z;
-                _roll = d.ftcPose.roll;
-                _pitch = d.ftcPose.pitch;
-                _yaw = d.ftcPose.yaw;
                 idsFound.append(String.format("%s",d.id));
             }
             else
             {
+                _pose = null;
                 _x = Double.NaN;
-                _y = Double.NaN;
-                _z = Double.NaN;
-                _roll = Double.NaN;
-                _pitch= Double.NaN;
-                _yaw =  Double.NaN;
                 idsFound.append("");
             }
 
@@ -98,22 +96,57 @@ public class CameraMonitor implements Runnable {
         return lastIdsFound;
     }
 
+    public AprilTagPoseFtc _pose = null;
     volatile double _x = Double.NaN;
-    volatile double _y = Double.NaN;
-    volatile double _z = Double.NaN;
-    volatile double _roll = Double.NaN;
-    volatile double _pitch = Double.NaN;
-    volatile double _yaw = Double.NaN;
 
-    public double GetX(){ return _x; }
-    public double GetY(){ return _y; }
-    public double GetZ(){ return _z; }
-    public double GetRoll(){ return _roll; }
-    public double GetPitch(){ return _pitch; }
-    public double GetYaw(){ return _yaw; }
+    public AprilTagPoseFtc GetPose()
+    {
+        return _pose;
+    }
+
+    public double GetCalculatedX(){ return _x; }
+
+    public double GetX()
+    {
+        if (_pose == null) return Double.NaN;
+        return _pose.x;
+    }
+
+    public double GetY()
+    {
+        if (_pose == null) return Double.NaN;
+        return _pose.y;
+    }
+
+    public double GetZ()
+    {
+        if (_pose == null) return Double.NaN;
+        return _pose.z;
+    }
+
+     public double GetYaw(){
+         if (_pose == null) return Double.NaN;
+         return _pose.yaw;
+     }
+
+    public double GetRange(){
+        if (_pose == null) return Double.NaN;
+        return _pose.range;
+    }
+
+    public double GetBearing(){
+        if (_pose == null) return Double.NaN;
+        return _pose.bearing;
+    }
 
     public void stop() {
         isRunning = false;
         visionPortal.stopStreaming();
+    }
+
+    public boolean IsReady()
+    {
+        return visionPortal.getCameraState() == VisionPortal.CameraState.CAMERA_DEVICE_READY ||
+                visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING;
     }
 }
