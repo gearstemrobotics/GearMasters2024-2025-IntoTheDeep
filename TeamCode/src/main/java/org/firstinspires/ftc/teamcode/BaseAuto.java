@@ -19,7 +19,6 @@ public abstract class BaseAuto extends LinearOpMode {
     // protected RevBlinkinLedDriver blinkinLedDriver;
     protected ColorSensor color;
 
-  //  protected CameraMonitor cameraMonitor;
     protected WebcamName webcamName;
     protected DcMotor BackLeft;
     protected DcMotor FrontRight;
@@ -167,12 +166,19 @@ public abstract class BaseAuto extends LinearOpMode {
         BackLeft.setPower(0);
     }
 
+    // runs after map and before wait for Start
+    protected void RunInit()
+    {
+    }
+
     protected abstract void RunOpModeInnerLoop();
 
     @Override
     public void runOpMode() {
 
         Map();
+
+        RunInit();
 
         waitForStart();
         if (opModeIsActive()) {

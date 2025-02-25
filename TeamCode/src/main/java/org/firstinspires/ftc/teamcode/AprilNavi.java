@@ -68,7 +68,7 @@ public class AprilNavi {
                     }
                 } else if (state == HomingState.HeadToTag) {
                     GoToAprilTag();
-                    if (cameraMonitor.GetRange() < 15 || Math.abs(cameraMonitor.GetYaw()) > 55) {
+                    if (cameraMonitor.GetRange() < 17 || Math.abs(cameraMonitor.GetYaw()) > 55) {
                         state = HomingState.CenterOnTag;
 
                         // wait a bit to make sure tag refreshes
@@ -209,7 +209,7 @@ public class AprilNavi {
         //Strafe Y
         if (Double.isNaN(Y) || isFor || isTurn) {
             power3 = 0;
-        } else if (Y >= 13) {
+        } else if (Y >= 14) {
             power3 = -0.3;
             isStrafe = true;
             setStatus = "Target";
@@ -294,7 +294,7 @@ public class AprilNavi {
         baseAuto.drive(-strafeY * 1, strafeY * 1, strafeY * 1, -strafeY * 1, 0.3);
     }
 
-    void GoToAprilTag() {
+    public boolean GoToAprilTag() {
         AprilTagPoseFtc pose = cameraMonitor.GetPose();
         if (pose != null) {
             double range = pose.range;
@@ -310,7 +310,14 @@ public class AprilNavi {
 
             // strafe
             baseAuto.drive(-strafe * 1, strafe * 1, strafe * 1, -strafe * 1, 0.3);
+
+            if (range < 1)
+            {
+                return true;
+            }
         }
+
+        return false;
     }
 
 }
