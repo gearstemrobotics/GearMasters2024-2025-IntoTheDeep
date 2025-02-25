@@ -47,6 +47,7 @@ public class AprilNavi {
     public void Home() {
         // kickoff thread for camera here
         boolean hasJumped = false;
+        state = HomingState.WaitForCamera;
 
         while (baseAuto.opModeIsActive()) {
             LoopCount++;
@@ -76,6 +77,7 @@ public class AprilNavi {
                     }
                 } else if (state == HomingState.CenterOnTag) {
                     JumpToAprilTag();
+
                     if (Math.abs(cameraMonitor.GetYaw()) < 2) {
                         state = HomingState.FineTune;
 
@@ -209,7 +211,7 @@ public class AprilNavi {
         //Strafe Y
         if (Double.isNaN(Y) || isFor || isTurn) {
             power3 = 0;
-        } else if (Y >= 14) {
+        } else if (Y >= 12) {
             power3 = -0.3;
             isStrafe = true;
             setStatus = "Target";
@@ -273,16 +275,29 @@ public class AprilNavi {
         return !(Double.isNaN(Y) && Double.isNaN(X) && Double.isNaN(Yaw));
     }
 
+    void StrafeInInches(int inchrs)
+    {
+        int strafeY = (int) (inchrs * 57.0);
+        baseAuto.drive(strafeY * 1, -strafeY * 1, -strafeY * 1, strafeY * 1, 0.3);
+    }
+
+    void MoveFor(int inchrs)
+    {
+        int Forx = (int) (inchrs * 45.0);
+        baseAuto.drive(Forx * 1, Forx * 1, Forx * 1, Forx * 1, 0.3);
+    }
+
     void JumpToAprilTag() {
         double Y = cameraMonitor.GetY();
-        Y = Y - 14;//32;
+        Y = Y - 16;
+
         double X = cameraMonitor.GetCalculatedX();
 
         double Yaw = cameraMonitor.GetYaw();
         int hex_motor_ticks = 288;
         int turnYaw = (int) (Yaw * -13.5);
-        int forX = (int) (X * 65.0);
-        int strafeY = (int) (Y * 65.0);
+        int forX = (int) (X * 45.0);
+        int strafeY = (int) (Y * 57.0);
         // rotate by yaw
         baseAuto.drive(-turnYaw * 1, -turnYaw * 1, turnYaw * 1, turnYaw * 1, 0.3);
 
@@ -291,7 +306,7 @@ public class AprilNavi {
         baseAuto.drive(forX * 1, forX * 1, forX * 1, forX * 1, 0.3);
         // move in Y
 
-        baseAuto.drive(-strafeY * 1, strafeY * 1, strafeY * 1, -strafeY * 1, 0.3);
+        baseAuto.drive(strafeY * 1, -strafeY * 1, -strafeY * 1, strafeY * 1, 0.3);
     }
 
     public boolean GoToAprilTag() {
@@ -303,7 +318,7 @@ public class AprilNavi {
             double bearing = pose.bearing;
             int hex_motor_ticks = 288;
             int turn = (int) (bearing * -13.5);
-            int strafe = (int) (range * -40.0);
+            int strafe = (int) (range * -57.0);
 
             // rotate
             baseAuto.drive(-turn * 1, -turn * 1, turn * 1, turn * 1, 0.3);
