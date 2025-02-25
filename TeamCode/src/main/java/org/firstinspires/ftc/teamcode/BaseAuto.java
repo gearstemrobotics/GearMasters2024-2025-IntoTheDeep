@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 
 public abstract class BaseAuto extends LinearOpMode {
 
@@ -17,8 +19,8 @@ public abstract class BaseAuto extends LinearOpMode {
     // protected RevBlinkinLedDriver blinkinLedDriver;
     protected ColorSensor color;
 
-    protected CameraMonitor cameraMonitor;
-
+  //  protected CameraMonitor cameraMonitor;
+    protected WebcamName webcamName;
     protected DcMotor BackLeft;
     protected DcMotor FrontRight;
     protected DcMotor FrontLeft;
@@ -56,6 +58,12 @@ public abstract class BaseAuto extends LinearOpMode {
 
         // gripper2Pos = 0;
 
+    }
+
+    public void Home()
+    {
+        AprilNavi aprilNavi = new AprilNavi(this);
+        aprilNavi.Home();
     }
 
     //arm encoder stuff
@@ -185,6 +193,7 @@ public abstract class BaseAuto extends LinearOpMode {
         gripper2 = hardwareMap.get(CRServo.class, "gripper2");
         gripper = hardwareMap.get(CRServo.class, "gripper");
         //blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam");
     }
 
     protected void PrepMotor() {

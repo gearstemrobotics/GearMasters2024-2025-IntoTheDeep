@@ -45,6 +45,7 @@ public class NormAutoPlusPushBlocks2 extends BaseAuto {
         //strafe right
         drive(-hex_motor_ticks * 8, hex_motor_ticks * 8, hex_motor_ticks * 8, -hex_motor_ticks * 8 , 0.3);
 
+
         //moves forward a little
         drive(hex_motor_ticks *2.5, hex_motor_ticks * 2.5, hex_motor_ticks * 2.5, hex_motor_ticks *2.5, 0.3);
 
