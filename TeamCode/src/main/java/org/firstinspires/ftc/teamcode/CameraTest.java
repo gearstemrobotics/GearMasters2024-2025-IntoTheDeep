@@ -41,6 +41,7 @@ public class CameraTest extends BaseAuto {
         telemetry.addData("yaw", String.format("%.2f", cameraMonitor.GetYaw()));
         telemetry.addData("range", String.format("%.2f", cameraMonitor.GetRange()));
         telemetry.addData("bearing", String.format("%.2f", cameraMonitor.GetBearing()));
+        telemetry.addData("Frame rate", cameraMonitor.FrameRate);
         telemetry.addData("LoopCount", LoopCount);
         telemetry.update();
     }

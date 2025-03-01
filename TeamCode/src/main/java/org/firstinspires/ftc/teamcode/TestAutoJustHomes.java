@@ -5,6 +5,12 @@ package org.firstinspires.ftc.teamcode;
 @Autonomous
 public class TestAutoJustHomes extends BaseAuto {
 
+    @Override
+    protected void RunInit()
+    {
+
+        super.RunInit();
+    }
 
     @Override
     public void RunOpModeInnerLoop() {

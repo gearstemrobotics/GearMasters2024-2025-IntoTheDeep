@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
@@ -16,6 +18,8 @@ public class AprilNavi {
         HeadToTag,
         CenterOnTag,
         FineTune,
+        FtcOmniDrive,
+        Homed,
     }
 
     public AprilNavi(BaseAuto Homing) {
@@ -39,6 +43,7 @@ public class AprilNavi {
         baseAuto.telemetry.addData("yaw", String.format("%.2f", cameraMonitor.GetYaw()));
         baseAuto.telemetry.addData("range", String.format("%.2f", cameraMonitor.GetRange()));
         baseAuto.telemetry.addData("bearing", String.format("%.2f", cameraMonitor.GetBearing()));
+        baseAuto.telemetry.addData("Frame rate", cameraMonitor.FrameRate);
         baseAuto.telemetry.addData("LoopCount", LoopCount);
         baseAuto.telemetry.update();
     }
@@ -70,12 +75,20 @@ public class AprilNavi {
                 } else if (state == HomingState.HeadToTag) {
                     GoToAprilTag();
                     if (cameraMonitor.GetRange() < 17 || Math.abs(cameraMonitor.GetYaw()) > 55) {
-                        state = HomingState.CenterOnTag;
+                        state = HomingState.FtcOmniDrive;//HomingState.CenterOnTag;
 
                         // wait a bit to make sure tag refreshes
                         Sleep(500);
                     }
-                } else if (state == HomingState.CenterOnTag) {
+                } else if (state == HomingState.FtcOmniDrive) {
+                    FtcOmniDrive();
+                    if (IsOmniHomed())
+                    {
+                        state = HomingState.Homed;
+                        break;
+                    }
+                }
+                else if (state == HomingState.CenterOnTag) {
                     JumpToAprilTag();
 
                     if (Math.abs(cameraMonitor.GetYaw()) < 2) {
@@ -85,9 +98,18 @@ public class AprilNavi {
                         Sleep(500);
                     }
                 } else if (state == HomingState.FineTune) {
+                    /*
+                    if (cameraMonitor.GetPose() == null)
+                    {
+                        state = HomingState.ScanForTag;
+                        continue;
+                    }
+                    */
+
                     AprilTagHoming();
 
                     if (IsHomed()) {
+                        state = HomingState.Homed;
                         // break out of the loop, we are done
                         break;
 
@@ -117,8 +139,9 @@ public class AprilNavi {
         if (pose != null) {
 
             double y = pose.y;
+            double x = pose.x;
             double yaw = Math.abs(pose.yaw);
-            if (y < 13 && y > 11 && yaw < 4) {
+            if (y < 13 && y > 11 && yaw < 3 && Math.abs(x) < 3) {
                 return true;
             }
         }
@@ -163,8 +186,8 @@ public class AprilNavi {
         double power2 = 0;
         double power3 = 0;
         double seeNoPower = 0;
-        double Xlimit = 5;
-        double Yawlimit = 4;
+        double Xlimit = 2;
+        double Yawlimit = 2;
 
         boolean isStrafe = false;
         boolean isFor = false;
@@ -178,12 +201,12 @@ public class AprilNavi {
             isFor = false;
         } else if (X >= Xlimit) {
             //move back
-            power1 = 0.3;
+            power1 = 0.2;
             isFor = true;
             setStatus = "Forward";
         } else if (X < -Xlimit) {
             // move forward
-            power1 = -0.3;
+            power1 = -0.2;
             isFor = true;
             setStatus = "Back";
         } else {
@@ -195,11 +218,11 @@ public class AprilNavi {
         if (Double.isNaN(Yaw) || isFor) {
             power2 = 0;
         } else if (Yaw >= Yawlimit) {
-            power2 = 0.3;
+            power2 = 0.2;
             isTurn = true;
             setStatus = "turn";
         } else if (Yaw <= -Yawlimit) {
-            power2 = -0.3;
+            power2 = -0.2;
             isTurn = true;
             setStatus = "Turn";
         } else {
@@ -288,10 +311,19 @@ public class AprilNavi {
     }
 
     void JumpToAprilTag() {
+        //Sleep(5000);
         double Y = cameraMonitor.GetY();
-        Y = Y - 16;
-
         double X = cameraMonitor.GetCalculatedX();
+        Y = Y - 16;
+        X = X - 3;
+
+        if (Math.abs(cameraMonitor.GetYaw()) > 45 && Y < 3)
+        {
+            //Y is wrong at extreme angle
+            Y = -24;
+        }
+
+
 
         double Yaw = cameraMonitor.GetYaw();
         int hex_motor_ticks = 288;
@@ -334,6 +366,108 @@ public class AprilNavi {
 
         return false;
     }
+
+    final double DESIRED_DISTANCE = 14.0; //  this is how close the camera should get to the target (inches)
+
+    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
+    //  applied to the drive motors to correct the error.
+    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
+    final double SPEED_GAIN  =  0.02;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double STRAFE_GAIN =  0.015;   //  Strafe Speed Control "Gain".  e.g. Ramp up to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
+    final double TURN_GAIN   =  0.01 ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+    final double MAX_AUTO_SPEED = 0.25;//0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.10;//0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.10;//0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+    public void FtcOmniDrive()
+    {
+
+        AprilTagPoseFtc ftcPose = cameraMonitor.GetPose();
+
+        if (ftcPose == null) return;
+
+        // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+        double  rangeError      = (ftcPose.range - DESIRED_DISTANCE);
+        double  headingError    = ftcPose.bearing;
+        double  yawError        = ftcPose.yaw;
+
+        // Use the speed and turn "gains" to calculate how we want the robot to move.
+        double strafe = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+        double turn  = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+        //strafe
+        double drive = - Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+        /*
+// Use the speed and turn "gains" to calculate how we want the robot to move.
+        drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+        turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+        strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+        */
+
+        double oomph = 0.06;
+
+        if (drive > 0) drive += oomph;
+        else drive -= oomph;
+
+        if (strafe > 0) strafe += oomph;
+        else strafe -= oomph;
+
+        if (turn > 0) turn += oomph;
+        else turn -= oomph;
+
+        baseAuto.telemetry.addData("drive", drive);
+        baseAuto.telemetry.addData("strafe", strafe);
+        baseAuto.telemetry.addData("turn", turn);
+
+        moveRobot(drive, strafe, turn);
+    }
+
+    public void moveRobot(double x, double y, double yaw) {
+        // switch to power mode
+        baseAuto.FrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseAuto.FrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseAuto.BackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseAuto.BackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Calculate wheel powers.
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // Send powers to the wheels.
+        baseAuto.FrontLeft.setPower(leftFrontPower);
+        baseAuto.FrontRight.setPower(rightFrontPower);
+        baseAuto.BackLeft.setPower(leftBackPower);
+        baseAuto.BackRight.setPower(rightBackPower);
+    }
+
+    public boolean IsOmniHomed() {
+        AprilTagPoseFtc pose = cameraMonitor.GetPose();
+        if (pose != null) {
+
+            double range = pose.range;
+            double yaw = pose.yaw;
+            double bearing = Math.abs(pose.bearing);
+            if (Math.abs(range - DESIRED_DISTANCE) < 0.25 && Math.abs(bearing) < 1 && Math.abs(yaw) < 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }
 
