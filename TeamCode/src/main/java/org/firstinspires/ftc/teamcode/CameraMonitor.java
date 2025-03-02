@@ -53,7 +53,7 @@ public class CameraMonitor implements Runnable {
         visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTagProcessor)
                 .setCamera(webcamName)
-                //.setCameraResolution(new Size(1280, 720))
+                .setCameraResolution(new Size(640, 480))
                 //.setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .build();
 
