@@ -11,6 +11,10 @@ public class AprilNaviFront {
     private BaseAuto baseAuto;
     private CameraMonitor cameraMonitor;
 
+    private double rangeGoalSet;
+
+    private double yGoalSet = 12;
+
     HomingState state = HomingState.WaitForCamera;
 
     public enum HomingState {
@@ -50,7 +54,11 @@ public class AprilNaviFront {
     }
 
 
-    public void Home() {
+    public void Home(double goal) {
+       // yGoalSet = yGoal;
+        //offset
+        rangeGoalSet = goal + 3;
+        DESIRED_DISTANCE = goal;
         // kickoff thread for camera here
         boolean hasJumped = false;
         state = HomingState.WaitForCamera;
@@ -75,7 +83,7 @@ public class AprilNaviFront {
                     }
                 } else if (state == HomingState.HeadToTag) {
                     GoToAprilTag();
-                    if (cameraMonitor.GetRange() < 17 || Math.abs(cameraMonitor.GetYaw()) > 55) {
+                    if (cameraMonitor.GetRange() < rangeGoalSet || Math.abs(cameraMonitor.GetYaw()) > 55) {
                         state = HomingState.FtcOmniDrive;//HomingState.CenterOnTag;
 
                         // wait a bit to make sure tag refreshes
@@ -89,6 +97,7 @@ public class AprilNaviFront {
                         break;
                     }
                 }
+                /*
                 else if (state == HomingState.CenterOnTag) {
                     JumpToAprilTag();
 
@@ -99,13 +108,11 @@ public class AprilNaviFront {
                         Sleep(500);
                     }
                 } else if (state == HomingState.FineTune) {
-                    /*
-                    if (cameraMonitor.GetPose() == null)
-                    {
-                        state = HomingState.ScanForTag;
-                        continue;
-                    }
-                    */
+                    //if (cameraMonitor.GetPose() == null)
+                    //{
+                    //    state = HomingState.ScanForTag;
+                    //    continue;
+                    //}
 
                     AprilTagHoming();
 
@@ -113,17 +120,9 @@ public class AprilNaviFront {
                         state = HomingState.Homed;
                         // break out of the loop, we are done
                         break;
-
-                        /*
-                        // lets see how we did!
-                        Sleep(5000);
-                        // rotate 180 and kick off the search again
-                        drive(-1000,-1000,1000,10000,0.5);
-                        state = HomingState.ScanForTag;
-                        */
                     }
-
                 }
+                */
             }
         }
     }
@@ -142,7 +141,7 @@ public class AprilNaviFront {
             double y = pose.y;
             double x = pose.x;
             double yaw = Math.abs(pose.yaw);
-            if (y < 13 && y > 11 && yaw < 3 && Math.abs(x) < 3) {
+            if (y < yGoalSet + 1 && y > yGoalSet - 1 && yaw < 3 && Math.abs(x) < 3) {
                 return true;
             }
         }
@@ -235,11 +234,11 @@ public class AprilNaviFront {
         //Strafe Y
         if (Double.isNaN(Y) || isFor || isTurn) {
             power3 = 0;
-        } else if (Y >= 12) {
+        } else if (Y >= yGoalSet) {
             power3 = -0.3;
             isStrafe = true;
             setStatus = "Target";
-        } else if (Y <= 11) {
+        } else if (Y <= yGoalSet -1) {
             power3 = 0.3;
             isStrafe = true;
             setStatus = "Target";
@@ -346,7 +345,11 @@ public class AprilNaviFront {
         AprilTagPoseFtc pose = cameraMonitor.GetPose();
         if (pose != null) {
             double range = pose.range;
-            range = range - 16;
+            range = range - rangeGoalSet;
+            if (range > 50)
+            {
+                range = 50;
+            }
 
             double bearing = pose.bearing;
             int hex_motor_ticks = 288;
@@ -355,9 +358,10 @@ public class AprilNaviFront {
 
             // rotate
             baseAuto.drive(-turn * 1, -turn * 1, turn * 1, turn * 1, 0.3);
-
             // drive
             baseAuto.drive(strafe * 1, strafe * 1, strafe * 1, strafe * 1, 0.3);
+
+
 
             if (range < 1)
             {
@@ -368,7 +372,7 @@ public class AprilNaviFront {
         return false;
     }
 
-    final double DESIRED_DISTANCE = 14.0; //  this is how close the camera should get to the target (inches)
+    double DESIRED_DISTANCE = 14.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.

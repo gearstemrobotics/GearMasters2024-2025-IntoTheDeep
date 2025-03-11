@@ -62,7 +62,7 @@ public abstract class BaseAuto extends LinearOpMode {
     public void Home()
     {
         AprilNaviFront aprilNaviFront = new AprilNaviFront(this);
-        aprilNaviFront.Home();
+        aprilNaviFront.Home(14);
     }
 
     //arm encoder stuff
