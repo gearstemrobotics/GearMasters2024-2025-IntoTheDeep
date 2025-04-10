@@ -49,6 +49,9 @@ public class DeepDrive extends LinearOpMode {
         DoWork2();
     }
 
+
+
+
     public void DoWork2() {
         BackGroundMech task = new BackGroundMech(gamepad1,
                 hardwareMap.get(DcMotor.class, "FrontRight"),
@@ -135,7 +138,6 @@ public class DeepDrive extends LinearOpMode {
 
                   //  blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
                 }
-
 
                 // less blue
                 //if (Blue > 1000) {
