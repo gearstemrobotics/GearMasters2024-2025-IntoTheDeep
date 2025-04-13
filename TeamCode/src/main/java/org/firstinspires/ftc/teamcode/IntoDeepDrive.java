@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 
-@TeleOp
+@TeleOp(name = "1MainDeepDrive")
 public class IntoDeepDrive extends LinearOpMode {
 
 
@@ -19,48 +19,16 @@ public class IntoDeepDrive extends LinearOpMode {
     private CRServo gripper;
     private CRServo gripper2;
 
-    // private TouchSensor TouchSen;
-
-    // private TouchSensor magSen;
     private ColorSensor color;
 
-    private DcMotor BackLeft;
-    private DcMotor FrontRight;
-    private DcMotor FrontLeft;
-
-    private DcMotor BackRight;
-    private DcMotor liftArm;
-    private DcMotor angleArm;
-    private DcMotor extendArm;
-
-
-    private DcMotor climbArm;
     private boolean Moving = false;
 
-    private boolean useExpanasionHub = true;
-
-
-    /*
-    private int anglePos = 0;
-    private int liftPos = 0;
-    private int extendPos = 0;
-    private int FrontRightPos = 0;
-    private int LeftArmPos = 0;
-    private int BackRightPos = 0;
-    private int RightArmPos = 0;
-    private int FrontLeftPos = 0;
-    private int BackLeftPos = 0;
-
-
-     */
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
     @Override
     public void runOpMode() {
-
-        //DoWork();
 
         DoWork3();
     }
@@ -83,21 +51,11 @@ public class IntoDeepDrive extends LinearOpMode {
 
         Thread t2 = new Thread(task2, "t2");
 
-        //  blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLedDriver");
+        int Red;
+        int Blue;
+        int Green;
 
-        float power2 = 0;
-        float power = 0;
-        float power3 = 0;
-
-
-        extendArm = hardwareMap.get(DcMotor.class, "extendArm");
-        liftArm = hardwareMap.get(DcMotor.class, "liftArm");
-        angleArm = hardwareMap.get(DcMotor.class, "angleArm");
-        climbArm = hardwareMap.get(DcMotor.class, "climbArm");
-
-        // TouchSen = hardwareMap.get(TouchSensor.class, "TouchSen");
-        // magSen = hardwareMap.get(TouchSensor.class, "magSen");
-        color = hardwareMap.get(ColorSensor.class, "Color");
+        //port 2 3 ****************************************************
         gripper = hardwareMap.get(CRServo.class, "gripper");
         gripper2 = hardwareMap.get(CRServo.class, "gripper2");
         color = hardwareMap.get(ColorSensor.class, "Color");
@@ -106,31 +64,49 @@ public class IntoDeepDrive extends LinearOpMode {
 
 
         waitForStart();
-        //t1.start();
         if (opModeIsActive()) {
             t1.start();
             t2.start();
             while (opModeIsActive()) {
+                Red = color.red();
+                Blue = color.blue();
+                Green = color.green();
 
 
-
-                if (gamepad2.left_trigger > 0) {
-                    gripper2.setPower(-1);
-                    gripper.setPower(1);
-                } else if (gamepad2.right_trigger > 0) {
-                    gripper2.setPower(1);
-                    gripper.setPower(-1);
-                } else {
+                /*
+                if (Red < 2000) {
+                    if (gamepad2.left_trigger > 0) {
+                        gripper2.setPower(-1);
+                        gripper.setPower(1);
+                    } else if (gamepad2.right_trigger > 0) {
+                        gripper2.setPower(1);
+                        gripper.setPower(-1);
+                    } else {
+                        gripper2.setPower(0);
+                        gripper.setPower(0);
+                    }
+                }
+                else
+                {
                     gripper2.setPower(0);
                     gripper.setPower(0);
                 }
 
+                 */
 
-                telemetry.addData("power", power);
-                telemetry.addData("power2", power2);
-                telemetry.addData("power3", power3);
-                // telemetry.addData("Touched", TouchSen.getValue());
-                // telemetry.addData("Touched Magnet", magSen.getValue());
+
+                if (Red > 2000) {
+                    gripper2.setPower(0);
+                    gripper.setPower(0);
+
+                } else if (Blue > 2000) {
+                    gripper2.setPower(1);
+                    gripper.setPower(-1);
+
+                } else {
+                    gripper2.setPower(-1);
+                    gripper.setPower(1);
+                }
                 telemetry.addData("Red", color.red());
                 telemetry.addData("Green", color.green());
                 telemetry.addData("Blue", color.blue());

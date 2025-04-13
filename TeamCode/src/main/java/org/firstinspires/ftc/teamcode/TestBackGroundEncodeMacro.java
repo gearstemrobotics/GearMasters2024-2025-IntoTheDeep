@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class TestBackGroundEncodeMacro implements Runnable {
     private boolean isRunning = true;
 
@@ -61,28 +63,33 @@ public class TestBackGroundEncodeMacro implements Runnable {
     public void run() {
 
 
+
         while (isRunning) {
+
 // Do the work
 
 
             if (GP2.a) {
-                arm(0, 1000, 0, 0);
+                arm(0, 1000, 0, 1);
             }
 
 
 
            else if (GP2.b) {
-                arm(0, -1000, 0, 0);
+                arm(0, -1000, 0, 1);
             }
            else
            {
+               liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+               extendArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+               angleArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                double power2;
-               if (GP.left_trigger > 0) // if left trigger > 0
+               if (GP2.left_trigger > 0) // if left trigger > 0
                {
-                   power2 = GP.left_trigger;
+                   power2 = GP2.left_trigger;
                } else // check rtrigger
                {
-                   power2 = -GP.right_trigger;
+                   power2 = -GP2.right_trigger;
                }
 
 
