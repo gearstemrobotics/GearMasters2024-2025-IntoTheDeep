@@ -1,18 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class TestBackGroundEncodeMacro implements Runnable {
     private boolean isRunning = true;
 
+    private CRServo gripper;
+    private CRServo gripper2;
+    private Servo OrientServo;
+    private Servo LevelServo;
     private DcMotor liftArm;
 
-    private DcMotor angleArm;
-    private DcMotor extendArm;
+    private DcMotor DumpArm;
+    private DcMotor extendArmUp;
+    private DcMotor extendArmSideways;
     private Gamepad GP;
     private Gamepad GP2;
 
@@ -23,38 +27,43 @@ public class TestBackGroundEncodeMacro implements Runnable {
     public boolean Moving = false;
 
     //All motors
-    public TestBackGroundEncodeMacro(Gamepad gamepad2, Gamepad gamepad1, DcMotor LiftArm, DcMotor AngleArm, DcMotor ExtendArm, boolean moving) {
+    public TestBackGroundEncodeMacro(Gamepad gamepad2, Gamepad gamepad1, DcMotor LiftArm, DcMotor AngleArm, DcMotor ExtendArm,
+                                     Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, boolean moving) {
         Moving = moving;
         GP2 = gamepad2;
         GP = gamepad1;
         liftArm = LiftArm;
-        angleArm = AngleArm;
-        extendArm = ExtendArm;
+        extendArmUp = AngleArm;
+        extendArmSideways = ExtendArm;
+        OrientServo = orientServo;
+        LevelServo = levelServo;
+        gripper = Gripper;
+        gripper2 = Gripper2;
 
 
     }
 
-    public void arm(double ExtendArmTarget, double LiftArmTarget, double AngleArmTarget, double Speed) {
+    public void arm(double ExtendArmUpTarget, double ExtendArmSidewaysTarget, double AngleArmTarget, double Speed) {
         Moving = true;
-        extendPos += ExtendArmTarget;
-        liftPos += LiftArmTarget;
+        extendPos += ExtendArmUpTarget;
+        liftPos += ExtendArmSidewaysTarget;
         anglePos += AngleArmTarget;
-        extendArm.setTargetPosition(extendPos);
+        extendArmUp.setTargetPosition(extendPos);
         liftArm.setTargetPosition(liftPos);
-        angleArm.setTargetPosition(anglePos);
-        extendArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendArmSideways.setTargetPosition(anglePos);
+        extendArmUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        angleArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        extendArm.setPower(Speed);
+        extendArmSideways.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendArmUp.setPower(Speed);
         liftArm.setPower(Speed);
-        angleArm.setPower(Speed);
-        while (isRunning && (extendArm.isBusy() || liftArm.isBusy() || angleArm.isBusy())) {
+        extendArmSideways.setPower(Speed);
+        while (isRunning && (extendArmUp.isBusy() || liftArm.isBusy() || extendArmSideways.isBusy())) {
             // Do nothing
             Moving = true;
         }
-        extendArm.setPower(0);
+        extendArmUp.setPower(0);
         liftArm.setPower(0);
-        angleArm.setPower(0);
+        extendArmSideways.setPower(0);
         Moving = false;
     }
 
@@ -68,9 +77,33 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
 // Do the work
 
+            //go down grab macro
+            if (GP2.x)
+            {
+                
+                arm(0, 1000, 0, 1);
+                OrientServo.setPosition(1);
+            }
+
+            //go back up dispense and bring up macro
+            if (GP2.y)
+            {
+                OrientServo.setPosition(0);
+                arm(0, -1000, 0, 1);
+                gripper.setPower(1);
+                gripper2.setPower(-1);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                arm(1000, 0, 0, 1);
+
+            }
+
 
             if (GP2.a) {
-                arm(0, 1000, 0, 1);
+                arm(0, 0, 100, 1);
             }
 
 
@@ -81,8 +114,8 @@ public class TestBackGroundEncodeMacro implements Runnable {
            else
            {
                liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-               extendArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-               angleArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+               extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+               extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                double power2;
                if (GP2.left_trigger > 0) // if left trigger > 0
                {
@@ -97,9 +130,9 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
 
                //extra arm
-               extendArm.setPower(-GP2.right_stick_y);
+               extendArmUp.setPower(-GP2.right_stick_y);
 
-               angleArm.setPower(GP2.left_stick_y);
+               extendArmSideways.setPower(GP2.left_stick_y);
 
 
            }

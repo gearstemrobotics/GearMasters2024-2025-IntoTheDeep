@@ -7,12 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 
 @TeleOp(name = "1MainDeepDrive")
-public class IntoDeepDrive extends LinearOpMode {
+public class MainDeepDrive extends LinearOpMode {
 
 
     //RevBlinkinLedDriver blinkinLedDriver;
@@ -45,8 +43,12 @@ public class IntoDeepDrive extends LinearOpMode {
 
         TestBackGroundEncodeMacro task2 = new TestBackGroundEncodeMacro(gamepad2, gamepad1,
                 hardwareMap.get(DcMotor.class, "liftArm"),
-                hardwareMap.get(DcMotor.class, "angleArm"),
-                hardwareMap.get(DcMotor.class, "extendArm"),
+                hardwareMap.get(DcMotor.class, "extendArmSideways"),
+                hardwareMap.get(DcMotor.class, "extendArmUp"),
+                hardwareMap.get(Servo.class, "OrientServo"),
+                hardwareMap.get(Servo.class, "LevelServo"),
+                hardwareMap.get(CRServo.class, "gripper"),
+                hardwareMap.get(CRServo.class, "gripper2"),
                 Moving);
 
         Thread t2 = new Thread(task2, "t2");
@@ -73,7 +75,7 @@ public class IntoDeepDrive extends LinearOpMode {
                 Green = color.green();
 
 
-                /*
+
                 if (Red < 2000) {
                     if (gamepad2.left_trigger > 0) {
                         gripper2.setPower(-1);
@@ -91,22 +93,35 @@ public class IntoDeepDrive extends LinearOpMode {
                     gripper2.setPower(0);
                     gripper.setPower(0);
                 }
+                if (Blue > 2000)
+                {
+                    gripper2.setPower(1);
+                    gripper.setPower(-1);
+                }
+
+
+                /*
+                if (gamepad2.right_trigger > 0) {
+                    gripper2.setPower(gamepad2.right_trigger);
+                    gripper.setPower(-gamepad2.right_trigger);
+                }
+
+
+                   else if (Red > 2000) {
+                        gripper2.setPower(0);
+                        gripper.setPower(0);
+
+                    } else if (Blue > 2000) {
+                        gripper2.setPower(1);
+                        gripper.setPower(-1);
+
+                    } else {
+                        gripper2.setPower(0);
+                        gripper.setPower(0);
+                    }
 
                  */
 
-
-                if (Red > 2000) {
-                    gripper2.setPower(0);
-                    gripper.setPower(0);
-
-                } else if (Blue > 2000) {
-                    gripper2.setPower(1);
-                    gripper.setPower(-1);
-
-                } else {
-                    gripper2.setPower(-1);
-                    gripper.setPower(1);
-                }
                 telemetry.addData("Red", color.red());
                 telemetry.addData("Green", color.green());
                 telemetry.addData("Blue", color.blue());
