@@ -14,10 +14,9 @@ public class MainDeepDrive extends LinearOpMode {
 
 
     //RevBlinkinLedDriver blinkinLedDriver;
-    private CRServo gripper;
-    private CRServo gripper2;
 
-    private ColorSensor color;
+
+
 
     private boolean Moving = false;
 
@@ -49,55 +48,34 @@ public class MainDeepDrive extends LinearOpMode {
                 hardwareMap.get(Servo.class, "LevelServo"),
                 hardwareMap.get(CRServo.class, "gripper"),
                 hardwareMap.get(CRServo.class, "gripper2"),
+                hardwareMap.get(ColorSensor.class, "Color"),
                 Moving);
 
         Thread t2 = new Thread(task2, "t2");
 
-        int Red;
-        int Blue;
-        int Green;
+
 
         //port 2 3 ****************************************************
+       /*
         gripper = hardwareMap.get(CRServo.class, "gripper");
         gripper2 = hardwareMap.get(CRServo.class, "gripper2");
-        color = hardwareMap.get(ColorSensor.class, "Color");
+
         gripper.resetDeviceConfigurationForOpMode();
         gripper2.resetDeviceConfigurationForOpMode();
 
+
+        */
 
         waitForStart();
         if (opModeIsActive()) {
             t1.start();
             t2.start();
             while (opModeIsActive()) {
-                Red = color.red();
-                Blue = color.blue();
-                Green = color.green();
 
 
 
-                if (Red < 2000) {
-                    if (gamepad2.left_trigger > 0) {
-                        gripper2.setPower(-1);
-                        gripper.setPower(1);
-                    } else if (gamepad2.right_trigger > 0) {
-                        gripper2.setPower(1);
-                        gripper.setPower(-1);
-                    } else {
-                        gripper2.setPower(0);
-                        gripper.setPower(0);
-                    }
-                }
-                else
-                {
-                    gripper2.setPower(0);
-                    gripper.setPower(0);
-                }
-                if (Blue > 2000)
-                {
-                    gripper2.setPower(1);
-                    gripper.setPower(-1);
-                }
+
+
 
 
                 /*
@@ -121,11 +99,13 @@ public class MainDeepDrive extends LinearOpMode {
                     }
 
                  */
-
+                /*
                 telemetry.addData("Red", color.red());
                 telemetry.addData("Green", color.green());
                 telemetry.addData("Blue", color.blue());
                 telemetry.update();
+
+                 */
 
 
             }

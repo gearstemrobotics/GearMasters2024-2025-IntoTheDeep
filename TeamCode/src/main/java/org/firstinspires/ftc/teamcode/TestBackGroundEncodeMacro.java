@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,7 +20,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
     private DcMotor extendArmSideways;
     private Gamepad GP;
     private Gamepad GP2;
-
+    private ColorSensor color;
 
     private int extendPos;
     private int liftPos;
@@ -28,7 +29,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
     //All motors
     public TestBackGroundEncodeMacro(Gamepad gamepad2, Gamepad gamepad1, DcMotor LiftArm, DcMotor AngleArm, DcMotor ExtendArm,
-                                     Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, boolean moving) {
+                                     Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, ColorSensor Color, boolean moving) {
         Moving = moving;
         GP2 = gamepad2;
         GP = gamepad1;
@@ -39,6 +40,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
         LevelServo = levelServo;
         gripper = Gripper;
         gripper2 = Gripper2;
+        color = Color;
 
 
     }
@@ -76,11 +78,18 @@ public class TestBackGroundEncodeMacro implements Runnable {
         while (isRunning) {
 
 // Do the work
+            int Red;
+            int Blue;
+            int Green;
+
+            Red = color.red();
+            Blue = color.blue();
+            Green = color.green();
 
             //go down grab macro
             if (GP2.x)
             {
-                
+
                 arm(0, 1000, 0, 1);
                 OrientServo.setPosition(1);
             }
@@ -116,6 +125,8 @@ public class TestBackGroundEncodeMacro implements Runnable {
                liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
                double power2;
                if (GP2.left_trigger > 0) // if left trigger > 0
                {
@@ -123,6 +134,31 @@ public class TestBackGroundEncodeMacro implements Runnable {
                } else // check rtrigger
                {
                    power2 = -GP2.right_trigger;
+               }
+
+
+
+               if (Red < 2000) {
+                   if (GP2.left_trigger > 0) {
+                       gripper2.setPower(-1);
+                       gripper.setPower(1);
+                   } else if (GP2.right_trigger > 0) {
+                       gripper2.setPower(1);
+                       gripper.setPower(-1);
+                   } else {
+                       gripper2.setPower(0);
+                       gripper.setPower(0);
+                   }
+               }
+               else
+               {
+                   gripper2.setPower(0);
+                   gripper.setPower(0);
+               }
+               if (Blue > 2000)
+               {
+                   gripper2.setPower(1);
+                   gripper.setPower(-1);
                }
 
 
