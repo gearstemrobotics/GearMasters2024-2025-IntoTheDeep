@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class TestBackGroundEncodeMacro implements Runnable {
     private boolean isRunning = true;
@@ -76,6 +77,8 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
 
         while (isRunning) {
+            extendArmUp.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            extendArmSideways.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 // Do the work
             int Red;
@@ -92,13 +95,16 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
                 arm(0, 1000, 0, 1);
                 OrientServo.setPosition(1);
+                LevelServo.setPosition(1);
             }
 
             //go back up dispense and bring up macro
             if (GP2.y)
             {
                 OrientServo.setPosition(0);
+                LevelServo.setPosition(0);
                 arm(0, -1000, 0, 1);
+               /*
                 gripper.setPower(1);
                 gripper2.setPower(-1);
                 try {
@@ -107,6 +113,8 @@ public class TestBackGroundEncodeMacro implements Runnable {
                     throw new RuntimeException(e);
                 }
                 arm(1000, 0, 0, 1);
+
+                */
 
             }
 
@@ -163,6 +171,17 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
 
                liftArm.setPower(power2);
+               if (GP2.dpad_up)
+               {
+                   OrientServo.setPosition(1);
+                   LevelServo.setPosition(1);
+               }
+
+               if (GP2.dpad_down)
+               {
+                   OrientServo.setPosition(0);
+                   LevelServo.setPosition(0);
+               }
 
 
                //extra arm
