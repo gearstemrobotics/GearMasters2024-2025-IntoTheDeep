@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 @TeleOp(name = "1MainDeepDrive")
@@ -14,7 +15,6 @@ public class MainDeepDrive extends LinearOpMode {
 
 
     //RevBlinkinLedDriver blinkinLedDriver;
-
 
 
 
@@ -41,7 +41,6 @@ public class MainDeepDrive extends LinearOpMode {
         Thread t1 = new Thread(task, "t1");
 
         TestBackGroundEncodeMacro task2 = new TestBackGroundEncodeMacro(gamepad2, gamepad1,
-                hardwareMap.get(DcMotor.class, "liftArm"),
                 hardwareMap.get(DcMotor.class, "extendArmSideways"),
                 hardwareMap.get(DcMotor.class, "extendArmUp"),
                 hardwareMap.get(Servo.class, "OrientServo"),
@@ -49,7 +48,10 @@ public class MainDeepDrive extends LinearOpMode {
                 hardwareMap.get(CRServo.class, "gripper"),
                 hardwareMap.get(CRServo.class, "gripper2"),
                 hardwareMap.get(ColorSensor.class, "Color"),
-                Moving);
+                hardwareMap.get(DcMotor.class, "DumpArm"),
+                hardwareMap.get(TouchSensor.class, "touch"),
+                Moving,
+                hardwareMap.get(DcMotor.class, "climbArm"));
 
         Thread t2 = new Thread(task2, "t2");
 
@@ -65,6 +67,8 @@ public class MainDeepDrive extends LinearOpMode {
 
 
         */
+
+        //TouchSensor touch = hardwareMap.get(TouchSensor.class, "touch");
 
         waitForStart();
         if (opModeIsActive()) {
@@ -99,13 +103,12 @@ public class MainDeepDrive extends LinearOpMode {
                     }
 
                  */
-                /*
-                telemetry.addData("Red", color.red());
-                telemetry.addData("Green", color.green());
-                telemetry.addData("Blue", color.blue());
+
+                task2.AddTelemetry(telemetry);
+              //  telemetry.addData("touch=", touch.isPressed());
                 telemetry.update();
 
-                 */
+
 
 
             }

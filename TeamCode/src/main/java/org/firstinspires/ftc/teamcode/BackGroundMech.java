@@ -35,8 +35,8 @@ public class BackGroundMech implements Runnable {
 // Do the work
 
             float pivot = -GP.right_stick_x;
-            float horizontal = -GP.left_stick_x;
-            float vertical = GP.left_stick_y;
+            float horizontal = GP.left_stick_x;
+            float vertical = -GP.left_stick_y;
 
             if (GP.left_bumper)
             {

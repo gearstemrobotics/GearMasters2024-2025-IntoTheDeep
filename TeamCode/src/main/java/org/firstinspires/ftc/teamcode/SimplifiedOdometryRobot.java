@@ -11,12 +11,14 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.List;
 
 public class SimplifiedOdometryRobot {
     // Adjust these numbers to suit your robot.
+    GoBildaPinpointDriver odo;
     private final double ODOM_INCHES_PER_COUNT   = 0.002969;   //  GoBilda Odometry Pod (1/226.8)
     private final boolean INVERT_DRIVE_ODOMETRY  = true;       //  When driving FORWARD, the odometry value MUST increase.  If it does not, flip the value of this constant.
     private final boolean INVERT_STRAFE_ODOMETRY = true;       //  When strafing to the LEFT, the odometry value MUST increase.  If it does not, flip the value of this constant.
@@ -95,11 +97,12 @@ public class SimplifiedOdometryRobot {
         FrontRight = setupDriveMotor("FrontRight", DcMotor.Direction.FORWARD);
         BackLeft = setupDriveMotor( "BackLeft", DcMotor.Direction.REVERSE);
         BackRight = setupDriveMotor( "BackRight",DcMotor.Direction.FORWARD);
-        imu2 = myOpMode.hardwareMap.get(IMU.class, "imu2");
+       // odo = myOpMode.hardwareMap.get(IMU.class, "odo");
 
         //  Connect to the encoder channels using the name of that channel.
         driveEncoder = myOpMode.hardwareMap.get(DcMotor.class, "axial");
         strafeEncoder = myOpMode.hardwareMap.get(DcMotor.class, "lateral");
+        odo = myOpMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
 
         // Set all hubs to use the AUTO Bulk Caching mode for faster encoder reads
         List<LynxModule> allHubs = myOpMode.hardwareMap.getAll(LynxModule.class);
@@ -135,16 +138,35 @@ public class SimplifiedOdometryRobot {
         return aMotor;
     }
 
+    public double GetDriveDistance()
+    {
+        /*
+        rawDriveOdometer = driveEncoder.getCurrentPosition() * (INVERT_DRIVE_ODOMETRY ? -1 : 1);
+        driveDistance = (rawDriveOdometer - driveOdometerOffset) * ODOM_INCHES_PER_COUNT;
+        return driveDistance;
+        */
+
+        return odo.getPosition().getX(DistanceUnit.INCH);
+    }
+
+    public double GetStrafeDistance()
+    {
+        // TODO: refactor strafe distance calls to use odo instead of strafeEncoder
+        return odo.getPosition().getY(DistanceUnit.INCH);
+    }
+
     /**
      * Read all input devices to determine the robot's motion
      * always return true so this can be used in "while" loop conditions
      * @return true
      */
     public boolean readSensors() {
-        rawDriveOdometer = driveEncoder.getCurrentPosition() * (INVERT_DRIVE_ODOMETRY ? -1 : 1);
-        rawStrafeOdometer = strafeEncoder.getCurrentPosition() * (INVERT_STRAFE_ODOMETRY ? -1 : 1);
-        driveDistance = (rawDriveOdometer - driveOdometerOffset) * ODOM_INCHES_PER_COUNT;
-        strafeDistance = (rawStrafeOdometer - strafeOdometerOffset) * ODOM_INCHES_PER_COUNT;
+        //rawDriveOdometer = driveEncoderPosition() * (INVERT_DRIVE_ODOMETRY ? -1 : 1);
+        //rawStrafeOdometer = strafeEncoder.getCurrentPosition() * (INVERT_STRAFE_ODOMETRY ? -1 : 1);
+        //driveDistance = (rawDriveOdometer - driveOdometerOffset) * ODOM_INCHES_PER_COUNT;
+        driveDistance = GetDriveDistance();
+        //strafeDistance = (rawStrafeOdometer - strafeOdometerOffset) * ODOM_INCHES_PER_COUNT;
+        strafeDistance = GetStrafeDistance();
 
         YawPitchRollAngles orientation = imu2.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu2.getRobotAngularVelocity(AngleUnit.DEGREES);
