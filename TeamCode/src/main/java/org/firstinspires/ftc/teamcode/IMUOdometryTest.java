@@ -46,7 +46,13 @@ public class IMUOdometryTest extends LinearOpMode {
             robot.strafe(-72, 0.60, 0.15);
 
              */
-            robot.turnTo(90, 0.45, 0.5);
+            //robot.turnTo(90, 0.45, 0.5);
+           robot.drive( 10, 0.60, 0.5);
+           robot.strafe( 10, 0.60, 0.5);
+            robot.drive( -10, 0.60, 0.5);
+            robot.strafe( -10, 0.60, 0.5);
+          //  robot.readSensors();
+           // telemetry.update();
         }
     }
 }

@@ -1,19 +1,19 @@
 
 package org.firstinspires.ftc.teamcode;
 
-        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
-        import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
-public class AprilNaviFront {
-    private BaseAuto baseAuto;
+public class OdoNavi {
+    private BaseOdoAuto baseOdoAuto;
     private CameraMonitor cameraMonitor;
 
     private double rangeGoalSet;
 
     private double yGoalSet = 12;
+    private GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
 
     HomingState state = HomingState.WaitForCamera;
 
@@ -27,10 +27,12 @@ public class AprilNaviFront {
         Homed,
     }
 
-    public AprilNaviFront(BaseAuto Homing) {
-        baseAuto = Homing;
-        cameraMonitor = new CameraMonitor(baseAuto.webcamName);
+    public OdoNavi(BaseOdoAuto Homing) {
+        baseOdoAuto = Homing;
+
+        cameraMonitor = new CameraMonitor(baseOdoAuto.webcamName);
         Thread t1 = new Thread(cameraMonitor, "t1");
+       // Thread t1 odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         t1.start();
 
     }
@@ -40,22 +42,22 @@ public class AprilNaviFront {
 
 
     private void AddTelemtry() {
-        baseAuto.telemetry.addData("state", state.toString());
-        baseAuto.telemetry.addData("x(calc)", String.format("%.2f", cameraMonitor.GetCalculatedX()));
-        baseAuto.telemetry.addData("x", String.format("%.2f", cameraMonitor.GetX()));
-        baseAuto.telemetry.addData("y", String.format("%.2f", cameraMonitor.GetY()));
-        baseAuto.telemetry.addData("z", String.format("%.2f", cameraMonitor.GetZ()));
-        baseAuto.telemetry.addData("yaw", String.format("%.2f", cameraMonitor.GetYaw()));
-        baseAuto.telemetry.addData("range", String.format("%.2f", cameraMonitor.GetRange()));
-        baseAuto.telemetry.addData("bearing", String.format("%.2f", cameraMonitor.GetBearing()));
-        baseAuto.telemetry.addData("Frame rate", cameraMonitor.FrameRate);
-        baseAuto.telemetry.addData("LoopCount", LoopCount);
-        baseAuto.telemetry.update();
+        baseOdoAuto.telemetry.addData("state", state.toString());
+        baseOdoAuto.telemetry.addData("x(calc)", String.format("%.2f", cameraMonitor.GetCalculatedX()));
+        baseOdoAuto.telemetry.addData("x", String.format("%.2f", cameraMonitor.GetX()));
+        baseOdoAuto.telemetry.addData("y", String.format("%.2f", cameraMonitor.GetY()));
+        baseOdoAuto.telemetry.addData("z", String.format("%.2f", cameraMonitor.GetZ()));
+        baseOdoAuto.telemetry.addData("yaw", String.format("%.2f", cameraMonitor.GetYaw()));
+        baseOdoAuto.telemetry.addData("range", String.format("%.2f", cameraMonitor.GetRange()));
+        baseOdoAuto.telemetry.addData("bearing", String.format("%.2f", cameraMonitor.GetBearing()));
+        baseOdoAuto.telemetry.addData("Frame rate", cameraMonitor.FrameRate);
+        baseOdoAuto.telemetry.addData("LoopCount", LoopCount);
+        baseOdoAuto.telemetry.update();
     }
 
 
     public void Home(double goal) {
-       // yGoalSet = yGoal;
+        // yGoalSet = yGoal;
         //offset
         rangeGoalSet = goal + 3;
         DESIRED_DISTANCE = goal;
@@ -63,10 +65,10 @@ public class AprilNaviFront {
         boolean hasJumped = false;
         state = HomingState.WaitForCamera;
 
-        while (baseAuto.opModeIsActive()) {
+        while (baseOdoAuto.opModeIsActive()) {
             LoopCount++;
             AddTelemtry();
-            baseAuto.telemetry.update();
+            baseOdoAuto.telemetry.update();
             if (cameraMonitor.IsReady()) {
                 //AprilTagHoming();
                 if (state == HomingState.WaitForCamera) {
@@ -156,14 +158,14 @@ public class AprilNaviFront {
             }
 
             for (int i = 0; i < 10; i++) {
-                baseAuto.drive(-hex_motor_ticks * 2, -hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.5);
+                baseOdoAuto.drive(-hex_motor_ticks * 2, -hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.5);
                 if (cameraMonitor.GetPose() != null) {
                     return;
                 }
             }
 
             for (int i = 0; i < 20; i++) {
-                baseAuto.drive(hex_motor_ticks * 2, hex_motor_ticks * 2, -hex_motor_ticks * 2, -hex_motor_ticks * 2, 0.5);
+                baseOdoAuto.drive(hex_motor_ticks * 2, hex_motor_ticks * 2, -hex_motor_ticks * 2, -hex_motor_ticks * 2, 0.5);
                 if (cameraMonitor.GetPose() != null) {
                     return;
                 }
@@ -173,10 +175,10 @@ public class AprilNaviFront {
 
     private boolean AprilTagHoming() {
         // switch to power mode
-        baseAuto.FrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        baseAuto.FrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        baseAuto.BackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        baseAuto.BackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseOdoAuto.FrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseOdoAuto.FrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseOdoAuto.BackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseOdoAuto.BackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         double Y = cameraMonitor.GetY();
@@ -256,34 +258,34 @@ public class AprilNaviFront {
         }
         //Power 1 = 1st set For/ Back
         if (isFor) {
-            baseAuto.FrontLeft.setPower(power1);
-            baseAuto.BackLeft.setPower(power1);
-            baseAuto.BackRight.setPower(power1);
-            baseAuto.FrontRight.setPower(power1);
+            baseOdoAuto.FrontLeft.setPower(power1);
+            baseOdoAuto.BackLeft.setPower(power1);
+            baseOdoAuto.BackRight.setPower(power1);
+            baseOdoAuto.FrontRight.setPower(power1);
         }
 
         //power 2 = second set turn
         else if (isTurn) {
-            baseAuto.FrontLeft.setPower(-power2);
-            baseAuto.BackLeft.setPower(-power2);
-            baseAuto.BackRight.setPower(power2);
-            baseAuto.FrontRight.setPower(power2);
+            baseOdoAuto.FrontLeft.setPower(-power2);
+            baseOdoAuto.BackLeft.setPower(-power2);
+            baseOdoAuto.BackRight.setPower(power2);
+            baseOdoAuto.FrontRight.setPower(power2);
         }
 
         //power 3 = third set that strafe to target
         else if (isStrafe) {
-            baseAuto.FrontLeft.setPower(power3);
-            baseAuto.BackLeft.setPower(-power3);
-            baseAuto.BackRight.setPower(power3);
-            baseAuto.FrontRight.setPower(-power3);
+            baseOdoAuto.FrontLeft.setPower(power3);
+            baseOdoAuto.BackLeft.setPower(-power3);
+            baseOdoAuto.BackRight.setPower(power3);
+            baseOdoAuto.FrontRight.setPower(-power3);
         }
 
         // seeNoPower = nothing is see just goes in circles
         else {
-            baseAuto.FrontLeft.setPower(seeNoPower);
-            baseAuto.BackLeft.setPower(seeNoPower);
-            baseAuto.BackRight.setPower(-seeNoPower);
-            baseAuto.FrontRight.setPower(-seeNoPower);
+            baseOdoAuto.FrontLeft.setPower(seeNoPower);
+            baseOdoAuto.BackLeft.setPower(seeNoPower);
+            baseOdoAuto.BackRight.setPower(-seeNoPower);
+            baseOdoAuto.FrontRight.setPower(-seeNoPower);
 
 
         }
@@ -301,13 +303,13 @@ public class AprilNaviFront {
     void StrafeInInches(int inchrs)
     {
         int strafeY = (int) (inchrs * 57.0);
-        baseAuto.drive(strafeY * 1, -strafeY * 1, -strafeY * 1, strafeY * 1, 0.3);
+        baseOdoAuto.drive(strafeY * 1, -strafeY * 1, -strafeY * 1, strafeY * 1, 0.3);
     }
 
     void MoveFor(int inchrs)
     {
         int Forx = (int) (inchrs * 45.0);
-        baseAuto.drive(Forx * 1, Forx * 1, Forx * 1, Forx * 1, 0.3);
+        baseOdoAuto.drive(Forx * 1, Forx * 1, Forx * 1, Forx * 1, 0.3);
     }
 
     void JumpToAprilTag() {
@@ -331,14 +333,14 @@ public class AprilNaviFront {
         int forX = (int) (X * 45.0);
         int strafeY = (int) (Y * 57.0);
         // rotate by yaw
-        baseAuto.drive(-turnYaw * 1, -turnYaw * 1, turnYaw * 1, turnYaw * 1, 0.3);
+        baseOdoAuto.drive(-turnYaw * 1, -turnYaw * 1, turnYaw * 1, turnYaw * 1, 0.3);
 
         // move in X
         //drive(hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.3);
-        baseAuto.drive(forX * 1, forX * 1, forX * 1, forX * 1, 0.3);
+        baseOdoAuto.drive(forX * 1, forX * 1, forX * 1, forX * 1, 0.3);
         // move in Y
 
-        baseAuto.drive(strafeY * 1, -strafeY * 1, -strafeY * 1, strafeY * 1, 0.3);
+        baseOdoAuto.drive(strafeY * 1, -strafeY * 1, -strafeY * 1, strafeY * 1, 0.3);
     }
 
     public boolean GoToAprilTag() {
@@ -357,9 +359,9 @@ public class AprilNaviFront {
             int strafe = (int) (range *  57.0);
 
             // rotate
-            baseAuto.drive(-turn * 1, -turn * 1, turn * 1, turn * 1, 0.3);
+            baseOdoAuto.drive(-turn * 1, -turn * 1, turn * 1, turn * 1, 0.3);
             // drive
-            baseAuto.drive(strafe * 1, strafe * 1, strafe * 1, strafe * 1, 0.3);
+            baseOdoAuto.drive(strafe * 1, strafe * 1, strafe * 1, strafe * 1, 0.3);
 
 
 
@@ -372,7 +374,7 @@ public class AprilNaviFront {
         return false;
     }
 
-    double DESIRED_DISTANCE = 0; //  this is how close the camera should get to the target (inches)
+    double DESIRED_DISTANCE = 14.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -420,19 +422,19 @@ public class AprilNaviFront {
         if (turn > 0) turn += oomph;
         else turn -= oomph;
 
-        baseAuto.telemetry.addData("drive", drive);
-        baseAuto.telemetry.addData("strafe", strafe);
-        baseAuto.telemetry.addData("turn", turn);
+        baseOdoAuto.telemetry.addData("drive", drive);
+        baseOdoAuto.telemetry.addData("strafe", strafe);
+        baseOdoAuto.telemetry.addData("turn", turn);
 
         moveRobot(drive, strafe, turn);
     }
 
     public void moveRobot(double x, double y, double yaw) {
         // switch to power mode
-        baseAuto.FrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        baseAuto.FrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        baseAuto.BackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        baseAuto.BackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseOdoAuto.FrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseOdoAuto.FrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseOdoAuto.BackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        baseOdoAuto.BackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Calculate wheel powers.
         double leftFrontPower    =  x -y -yaw;
@@ -453,10 +455,10 @@ public class AprilNaviFront {
         }
 
         // Send powers to the wheels.
-        baseAuto.FrontLeft.setPower(leftFrontPower);
-        baseAuto.FrontRight.setPower(rightFrontPower);
-        baseAuto.BackLeft.setPower(leftBackPower);
-        baseAuto.BackRight.setPower(rightBackPower);
+        baseOdoAuto.FrontLeft.setPower(leftFrontPower);
+        baseOdoAuto.FrontRight.setPower(rightFrontPower);
+        baseOdoAuto.BackLeft.setPower(leftBackPower);
+        baseOdoAuto.BackRight.setPower(rightBackPower);
     }
 
     public boolean IsOmniHomed() {

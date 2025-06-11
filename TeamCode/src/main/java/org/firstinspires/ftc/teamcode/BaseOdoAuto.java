@@ -75,6 +75,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
     protected  void forward(double DistanceInch, double Speed)
     {
+        odo.resetPosAndIMU();
         Pose2D pos = odo.getPosition();
         boolean done = false;
         if (DistanceInch == pos.getX(DistanceUnit.INCH))
@@ -257,7 +258,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         odo.setOffsets(-55.0, 50.0, DistanceUnit.MM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        odo.resetPosAndIMU();
+
         double newTime = getRuntime();
         double loopTime = newTime-oldTime;
         double frequency = 1/loopTime;

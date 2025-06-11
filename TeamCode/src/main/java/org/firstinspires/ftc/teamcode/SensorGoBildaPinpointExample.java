@@ -86,7 +86,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
         backwards is a negative number.
          */
-        odo.setOffsets(-55.0, 50.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setOffsets(-83.5, 12.5, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
 
 
         /*

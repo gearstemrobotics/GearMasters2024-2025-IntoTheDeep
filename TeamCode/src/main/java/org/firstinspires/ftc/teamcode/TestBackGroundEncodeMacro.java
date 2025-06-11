@@ -116,6 +116,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
             // to-do add rest of motors
 
 // Do the work
+            /*
             int Red;
             int Blue;
             int Green;
@@ -123,6 +124,8 @@ public class TestBackGroundEncodeMacro implements Runnable {
             Red = color.red();
             Blue = color.blue();
             Green = color.green();
+
+             */
 
             //go down grab macro
            // if (GP2.x)
@@ -191,7 +194,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
                 gripper.setPower(0);
                 gripper2.setPower(0);
                 //DumpArm.setPower(0.3);
-                arm(5 ,2,1);
+               // arm(5 ,2,1);
                 // DumpArm.setPower(0);
               //  arm(8,0,1);
 
@@ -235,13 +238,15 @@ public class TestBackGroundEncodeMacro implements Runnable {
                } else if (GP2.right_trigger > 0) {
                    gripper2.setPower(1);
                    gripper.setPower(-1);
-
+                /*
                }else if (Red > 440 ) {
                    //&& Green > 230 && Blue > 90) {
                    gripper2.setPower(-1);
                    gripper.setPower(1);
 
                }
+
+                 */
                /*
                //Blue check
                else if (Blue > 500) {
@@ -250,6 +255,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
                }
 
                 */
+               }
                else
                {
                    gripper2.setPower(0);
@@ -275,7 +281,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
                //extra arm
                extendArmUp.setPower(-GP2.right_stick_y);
 
-               extendArmSideways.setPower(GP2.left_stick_y);
+               extendArmSideways.setPower(-GP2.left_stick_y);
                /*
                if (GP2.dpad_left)
                {
@@ -293,8 +299,8 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
 
                 */
-               DumpArm.setPower(GP2.left_stick_x * 0.5);
-               climbArm.setPower(GP2.right_stick_x * 0.5);
+               DumpArm.setPower(GP2.right_stick_x * 0.5);
+              // climbArm.setPower(GP2.right_stick_x * 0.5);
 
 
            }

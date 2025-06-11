@@ -10,14 +10,14 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name = "PutsThingOnThingThenParks")
+@Autonomous(name = "1RealTestCamera")
 public class JustPutsTheThingOnTheThing extends BaseAuto {
 
 
     @Override
     public void RunOpModeInnerLoop() {
-
-
+        Home();
+        /*
         sleep(500);
         int hex_motor_ticks = 288;
         extendPos = 0;
@@ -36,6 +36,8 @@ public class JustPutsTheThingOnTheThing extends BaseAuto {
         //Moves to the corner
         drive(hex_motor_ticks * 7, -hex_motor_ticks * 7, -hex_motor_ticks * 7, hex_motor_ticks * 7, 0.5);
         drive(-hex_motor_ticks * 8, -hex_motor_ticks * 9, -hex_motor_ticks * 9, -hex_motor_ticks * 9, 0.5);
+
+         */
     }
     //telemetry.addData("April Tags", cameraMonitor.GetIdsFound());
     //telemetry.addData("BackLeft.getCurrentPosition", BackLeft.getCurrentPosition());
