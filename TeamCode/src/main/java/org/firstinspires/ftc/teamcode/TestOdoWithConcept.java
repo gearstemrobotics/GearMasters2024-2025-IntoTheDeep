@@ -40,6 +40,17 @@ public class TestOdoWithConcept extends LinearOpMode {
             telemetry.update();
 
             navigation.resetPosition();
+
+            move(10, 0, 0);
+            move(10, 0, 90);
+            move(0, 0, 0);
+            move(0,0,180);
+            move(0,10,0);
+            move(0,0,0);
+
+            move(0,0,-90);
+            move(0,0,0);
+            /*
             move(10, 0, 0);
             move(0, 0, 0);
             //navigation.resetPosition();
@@ -52,6 +63,8 @@ public class TestOdoWithConcept extends LinearOpMode {
             move(0, -10, 0);
             move(0, 0, 0);
 
+
+             */
             //navigation.resetPosition();
 
             // Move to position 2: 18 inches right, turn to face movement direction

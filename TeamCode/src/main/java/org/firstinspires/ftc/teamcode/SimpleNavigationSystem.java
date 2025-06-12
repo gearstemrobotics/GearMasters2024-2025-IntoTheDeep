@@ -91,7 +91,13 @@ public class SimpleNavigationSystem {
      */
     public boolean moveUntilPositioned(double targetX, double targetY, double targetHeading) {
         // Get current position (convert mm to inches)
-        odo.update();
+        if (Math.abs(targetHeading) > 0) {
+            odo.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
+        }
+        else
+        {
+            odo.update();
+        }
         Pose2D pos = odo.getPosition();
         double currentX = pos.getX(DistanceUnit.INCH);//getCurrentX();
         double currentY = pos.getY(DistanceUnit.INCH);//getCurrentY();
