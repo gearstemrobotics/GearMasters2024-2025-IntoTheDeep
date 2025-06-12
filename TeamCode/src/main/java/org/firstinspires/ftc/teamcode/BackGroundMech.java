@@ -28,13 +28,13 @@ public class BackGroundMech implements Runnable {
     @Override
     public void run() {
          FrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        FrontRight.setDirection(DcMotor.Direction.REVERSE);
-       // BackLeft.setDirection(DcMotor.Direction.REVERSE);
+       // FrontRight.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         while (isRunning) {
 // Do the work
 
-            float pivot = -GP.right_stick_x;
+            float pivot = GP.right_stick_x;
             float horizontal = GP.left_stick_x;
             float vertical = -GP.left_stick_y;
 
