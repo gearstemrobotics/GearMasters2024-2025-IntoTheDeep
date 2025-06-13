@@ -155,14 +155,14 @@ public class AprilNaviOdo {
             }
 
             for (int i = 0; i < 10; i++) {
-                baseOdoAuto.drive(-hex_motor_ticks * 2, -hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.5);
+                baseOdoAuto.drive(-hex_motor_ticks * 2, -hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.1);
                 if (cameraMonitor.GetPose() != null) {
                     return;
                 }
             }
 
             for (int i = 0; i < 20; i++) {
-                baseOdoAuto.drive(hex_motor_ticks * 2, hex_motor_ticks * 2, -hex_motor_ticks * 2, -hex_motor_ticks * 2, 0.5);
+                baseOdoAuto.drive(hex_motor_ticks * 2, hex_motor_ticks * 2, -hex_motor_ticks * 2, -hex_motor_ticks * 2, 0.1);
                 if (cameraMonitor.GetPose() != null) {
                     return;
                 }
@@ -358,7 +358,7 @@ public class AprilNaviOdo {
             // rotate
             baseOdoAuto.drive(-turn * 1, -turn * 1, turn * 1, turn * 1, 0.3);
             // drive
-            baseOdoAuto.drive(strafe * 1, strafe * 1, strafe * 1, strafe * 1, 0.3);
+            baseOdoAuto.drive(strafe * 1, -strafe * 1, -strafe * 1, strafe * 1, 0.3);
 
 
 
@@ -423,7 +423,7 @@ public class AprilNaviOdo {
         baseOdoAuto.telemetry.addData("strafe", strafe);
         baseOdoAuto.telemetry.addData("turn", turn);
 
-        moveRobot(drive, strafe, turn);
+        moveRobot(-strafe, drive, turn);
     }
 
     public void moveRobot(double x, double y, double yaw) {

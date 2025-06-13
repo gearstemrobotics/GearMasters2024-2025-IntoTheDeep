@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 public abstract class BaseOdoAuto extends LinearOpMode {
 
+    protected SimpleNavigationSystem navigation = new SimpleNavigationSystem();
+
     protected TouchSensor TouchSen;
     // protected RevBlinkinLedDriver blinkinLedDriver;
     protected ColorSensor color;
@@ -74,58 +76,21 @@ public abstract class BaseOdoAuto extends LinearOpMode {
     }
 
 
-    protected void simpleForward(double goal, double Speed)
-    {
 
+    public void move(double x, double y, double heading)
+    {
+        while (opModeIsActive() && !navigation.moveUntilPositioned(x, y, heading)) {
+            telemetry.update();
+            sleep(10); // Faster update for precision
+        }
+        sleep(1000); // Longer pause to observe precision
     }
 
-    protected void forward(double DistanceInch, double Speed)
-    {
-
-
-        double DESIRED_DISTANCE = DistanceInch;
-
-        //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
-        //  applied to the drive motors to correct the error.
-        //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-        final double SPEED_GAIN  =  0.02;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-        final double STRAFE_GAIN =  0.015;   //  Strafe Speed Control "Gain".  e.g. Ramp up to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
-        final double TURN_GAIN   =  0.01 ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-
-        final double MAX_AUTO_SPEED = 0.25;//0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-        final double MAX_AUTO_STRAFE= 0.10;//0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
-        final double MAX_AUTO_TURN  = 0.10;//0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
 
 
 
-        // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-        double  rangeError      = (odo.getPosition().getX(DistanceUnit.INCH) - DESIRED_DISTANCE);
-      //  double  headingError    = ftcPose.bearing;
-       // double  yawError        = ftcPose.yaw;
 
-        // Use the speed and turn "gains" to calculate how we want the robot to move.
-        double drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-        //double turn  = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-        //strafe
-        //double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-
-
-        odo.resetPosAndIMU();
-        Pose2D pos = odo.getPosition();
-        boolean done = false;
-        if (DistanceInch == pos.getX(DistanceUnit.INCH))
-        {done = true;
-        }
-
-        while(opModeIsActive()||done)
-        {
-
-
-           ///if (pos.getX(DistanceUnit.INCH))
-        }
-    }
     //arm encoder stuff
     protected void arm(double ExtendArmTarget, double ExtendArmSidewaysTarget, double DumpArmTarget, double Speed) {
         extendPos += ExtendArmTarget;
@@ -147,6 +112,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         extendArmSideways.setPower(0);
         DumpArm.setPower(0);
     }
+    /*
 
     protected void everything( double FrontRightTarget, double BackRightTarget,
                                double FrontLeftTarget, double BackLeftTarget,
@@ -194,11 +160,16 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         extendArmSideways.setPower(0);
         DumpArm.setPower(0);
     }
+     */
+
 
     protected void drive(double FrontRightTarget, double BackRightTarget,
                          double FrontLeftTarget, double BackLeftTarget, double Speed) {
 
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontRight.setDirection(DcMotor.Direction.FORWARD);
+        BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRightPos += FrontRightTarget;
         BackRightPos += BackRightTarget;
         FrontLeftPos += FrontLeftTarget;
@@ -216,14 +187,6 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         FrontLeft.setPower(Speed);
         BackLeft.setPower(Speed);
         while (opModeIsActive() && (FrontRight.isBusy() && BackRight.isBusy() && FrontLeft.isBusy() && BackLeft.isBusy()))
-                odo.update();
-
-
-
-
-
-
-
             // while everything is busy
             // (FrontRight.isBusy() || BackRight.isBusy() || FrontLeft.isBusy() || BackLeft.isBusy()) // while anything is busy
          {
@@ -262,9 +225,9 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
         FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
         BackRight = hardwareMap.get(DcMotor.class, "BackRight");
-        extendArmUp = hardwareMap.get(DcMotor.class, "extendArm");
-        extendArmSideways = hardwareMap.get(DcMotor.class, "liftArm");
-        DumpArm = hardwareMap.get(DcMotor.class, "angleArm");
+        extendArmUp = hardwareMap.get(DcMotor.class, "extendArmUp");
+        extendArmSideways = hardwareMap.get(DcMotor.class, "extendArmSideways");
+        DumpArm = hardwareMap.get(DcMotor.class, "DumpArm");
         gripper2 = hardwareMap.get(CRServo.class, "gripper2");
         gripper = hardwareMap.get(CRServo.class, "gripper");
         //blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -274,7 +237,12 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
     protected void PrepMotor() {
 
+
+        // Set motor directions - all reversed except front right
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontRight.setDirection(DcMotor.Direction.FORWARD);
+        BackRight.setDirection(DcMotor.Direction.REVERSE);
         extendArmSideways.setDirection(DcMotorSimple.Direction.REVERSE);
         extendArmUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -291,7 +259,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         extendArmSideways.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         DumpArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
+/*
         odo.setOffsets(-55.0, 50.0, DistanceUnit.MM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
@@ -301,6 +269,8 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         double frequency = 1/loopTime;
         oldTime = newTime;
         Pose2D pos = odo.getPosition();
+
+ */
     }
 }
 
