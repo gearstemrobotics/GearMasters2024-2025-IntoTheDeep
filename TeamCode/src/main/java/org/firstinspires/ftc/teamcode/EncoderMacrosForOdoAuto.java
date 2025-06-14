@@ -52,8 +52,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
 
     }
 
-    public boolean hasBlock()
-    {
+    public boolean hasBlock() {
         int Green = color.green();
         int Blue = color.blue();
         int Red = color.red();
@@ -73,8 +72,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         extendArmUp.setPower(Speed);
         extendArmSideways.setPower(Speed);
 
-        while (isRunning && (extendArmUp.isBusy() || extendArmSideways.isBusy()))
-        {
+        while (isRunning && (extendArmUp.isBusy() || extendArmSideways.isBusy())) {
         }
 
         extendArmUp.setPower(0);
@@ -98,6 +96,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         MoveArmIn,
         MoveArmUp,
         MoveArmOut,
+        MoveArmDown
     }
 
     private volatile Operation _operation = Operation.None;
@@ -127,27 +126,22 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         return true;
     }
 
-    public void MoveArmOut()
-    {
+    public void MoveArmOut() {
         extendArmUp.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm(0,100,1);
+        arm(0, 100, 1);
         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         OrientServo.setPosition(0);
         LevelServo.setPosition(0);
 
-        while(true)
-        {
-            if (hasBlock())
-            {
+        while (true) {
+            if (hasBlock()) {
                 gripper.setPower(0);
                 gripper2.setPower(0);
                 extendArmSideways.setPower(0);
                 break;
-            }
-            else
-            {
+            } else {
                 gripper.setPower(-1);
                 gripper2.setPower(1);
                 extendArmSideways.setPower(1);
@@ -155,16 +149,25 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         }
     }
 
-    public void MoveArmUp()
-    {
+    public void MoveArmDown() {
+        extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        myStopWatch.reset();
+        while (myStopWatch.seconds() < 3) {
+            DumpArm.setPower(-0.3);
+            extendArmUp.setPower(-1);
+        }
+        DumpArm.setPower(0);
+        extendArmUp.setPower(0);
+    }
+
+    public void MoveArmUp() {
         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         DumpArm.setPower(-0.3);
         myStopWatch.reset();
 
-        while (myStopWatch.seconds() < 3.0)
-        {
+        while (myStopWatch.seconds() < 3.0) {
             extendArmUp.setPower(1);
         }
 
@@ -172,8 +175,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         DumpArm.setPower(0);
     }
 
-    public boolean isTouched()
-    {
+    public boolean isTouched() {
         if (touch.isPressed()) {
             return true;
         } else {
@@ -190,8 +192,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         //_telemData = "starting extend arm";
 
         // move arm in until touch sensor is reached
-        while (isRunning && !isTouched())
-        {
+        while (isRunning && !isTouched()) {
             extendArmSideways.setPower(-1);
         }
 
@@ -199,7 +200,10 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         gripper2.setPower(-1);
 
         // sleep for a second
-        try { Thread.sleep(1000); } catch (InterruptedException ignored) { }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
 
         gripper.setPower(0);
         gripper2.setPower(0);
@@ -215,11 +219,15 @@ public class EncoderMacrosForOdoAuto implements Runnable {
                     _operation = Operation.None;
                     break;
                 case MoveArmUp:
-                   MoveArmUp();
+                    MoveArmUp();
                     _operation = Operation.None;
                     break;
                 case MoveArmOut:
                     MoveArmOut();
+                    _operation = Operation.None;
+                    break;
+                case MoveArmDown:
+                    MoveArmDown();
                     _operation = Operation.None;
                     break;
                 case None:
