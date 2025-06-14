@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -383,6 +382,14 @@ public class AprilNaviOdo {
     final double MAX_AUTO_SPEED = 0.25;//0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_STRAFE= 0.10;//0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.10;//0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+
+    final double HOMED_RANGE_TOLERANCE = 0.25;
+    final double HOMED_BEARING_TOLERANCE = 0.5;
+    final double HOMED_YAW_TOLERANCE = 0.5;
+
+    // Oscillation fix variables
+    private int stableHomingCount = 0;
+
     public void FtcOmniDrive()
     {
 
@@ -395,29 +402,29 @@ public class AprilNaviOdo {
         double  headingError    = ftcPose.bearing;
         double  yawError        = ftcPose.yaw;
 
+        // OSCILLATION FIX 1: Add deadband to prevent micro-movements
+        if (Math.abs(rangeError) < HOMED_RANGE_TOLERANCE) rangeError = 0;
+        if (Math.abs(headingError) < HOMED_BEARING_TOLERANCE) headingError = 0;
+        if (Math.abs(yawError) < HOMED_YAW_TOLERANCE) yawError = 0;
+
         // Use the speed and turn "gains" to calculate how we want the robot to move.
         double drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
         double turn  = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
         //strafe
         double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
-        /*
-// Use the speed and turn "gains" to calculate how we want the robot to move.
-        drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-        turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-        strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-        */
+        // OSCILLATION FIX 2: Replace "oomph" with smart minimum power
+        final double MIN_POWER = 0.10; // Minimum power to overcome robot weight
 
-        double oomph = 0.06;
-
-        if (drive > 0) drive += oomph;
-        else drive -= oomph;
-
-        if (strafe > 0) strafe += oomph;
-        else strafe -= oomph;
-
-        if (turn > 0) turn += oomph;
-        else turn -= oomph;
+        if (Math.abs(drive) > 0 && Math.abs(drive) < MIN_POWER) {
+            drive = drive > 0 ? MIN_POWER : -MIN_POWER;
+        }
+        if (Math.abs(strafe) > 0 && Math.abs(strafe) < MIN_POWER) {
+            strafe = strafe > 0 ? MIN_POWER : -MIN_POWER;
+        }
+        if (Math.abs(turn) > 0 && Math.abs(turn) < MIN_POWER) {
+            turn = turn > 0 ? MIN_POWER : -MIN_POWER;
+        }
 
         baseOdoAuto.telemetry.addData("drive", drive);
         baseOdoAuto.telemetry.addData("strafe", strafe);
@@ -458,21 +465,27 @@ public class AprilNaviOdo {
         baseOdoAuto.BackRight.setPower(rightBackPower);
     }
 
+    // OSCILLATION FIX 3: Improved homing check with stability requirement
     public boolean IsOmniHomed() {
         AprilTagPoseFtc pose = cameraMonitor.GetPose();
-        if (pose != null) {
-
-            double range = pose.range;
-            double yaw = pose.yaw;
-            double bearing = Math.abs(pose.bearing);
-            if (Math.abs(range - DESIRED_DISTANCE) < 0.25 && Math.abs(bearing) < 1 && Math.abs(yaw) < 1) {
-                return true;
-            }
+        if (pose == null) {
+            stableHomingCount = 0;
+            return false;
         }
-        return false;
+
+        double range = pose.range;
+        double yaw = pose.yaw;
+        double bearing = Math.abs(pose.bearing);
+
+        // Check if within tolerance (slightly relaxed tolerances)
+        if (Math.abs(range - DESIRED_DISTANCE) <= HOMED_RANGE_TOLERANCE && Math.abs(bearing) <= HOMED_BEARING_TOLERANCE && Math.abs(yaw) <= HOMED_YAW_TOLERANCE) {
+            stableHomingCount++;
+            return stableHomingCount >= 5; // Must be stable for 5 cycles to prevent oscillation
+        } else {
+            stableHomingCount = 0;
+            return false;
+        }
     }
 
 
 }
-
-

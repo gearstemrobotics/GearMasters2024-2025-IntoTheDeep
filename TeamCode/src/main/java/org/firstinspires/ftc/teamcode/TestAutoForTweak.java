@@ -10,6 +10,7 @@ public class TestAutoForTweak extends BaseOdoAuto{
     {
 
 double Tick = 100;
+//move(10,0,0);
         Home();
        // FrontLeft.getCurrentPosition();
          /*

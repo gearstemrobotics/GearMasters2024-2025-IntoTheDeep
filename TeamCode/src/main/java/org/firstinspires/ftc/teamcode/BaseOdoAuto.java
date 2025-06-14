@@ -79,6 +79,11 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
     public void move(double x, double y, double heading)
     {
+        FrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         while (opModeIsActive() && !navigation.moveUntilPositioned(x, y, heading)) {
             telemetry.update();
             sleep(10); // Faster update for precision
@@ -201,6 +206,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
     // runs after map and before wait for Start
     protected void RunInit()
     {
+        //navigation.init(hardwareMap, telemetry);
     }
 
     protected abstract void RunOpModeInnerLoop();
@@ -211,6 +217,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         Map();
 
         RunInit();
+        navigation.init(hardwareMap, telemetry);
 
         waitForStart();
         if (opModeIsActive()) {
