@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.text.method.MovementMethod;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -28,18 +31,21 @@ public class EncoderMacrosForOdoAuto implements Runnable {
     private DcMotor DumpArm;
     private DcMotor extendArmUp;
     private DcMotor extendArmSideways;
-    private Gamepad GP;
-    private Gamepad GP2;
-    private ColorSensor color;
+   // private Gamepad GP;
+   // private Gamepad GP2;
+    private ColorRangeSensor color;
 
     private int extendPos;
     private int liftPos;
     private int anglePos;
     public boolean Moving = false;
+    private boolean MoveGripper = false;
+    private static ElapsedTime myStopWatch = new ElapsedTime();
 
+   private boolean Stop = false;
 
     public EncoderMacrosForOdoAuto(DcMotor ExtendArmSideways, DcMotor ExtendArmUp,
-                                   Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, ColorSensor Color,
+                                   Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, ColorRangeSensor Color,
                                    DcMotor dumpArm, TouchSensor Touch, DcMotor ClimbArm) {
         extendArmSideways = ExtendArmSideways;
         extendArmUp = ExtendArmUp;
@@ -52,6 +58,15 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         touch = Touch;
         climbArm = ClimbArm;
 
+    }
+
+    public boolean hasBlock()
+    {
+        int Green = color.green();
+        int Blue = color.blue();
+        int Red = color.red();
+
+        return (Red > 300 && Green > 170 && Blue > 100);// || Red > 15 && Green > 160 && Blue > 150)
     }
 
     public void arm(double ExtendArmUpTarget, double ExtendArmSidewaysTarget, double Speed) {
@@ -72,17 +87,37 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         extendArmUp.setPower(Speed);
         //liftArm.setPower(Speed);
         extendArmSideways.setPower(Speed);
-        while (isRunning && (extendArmUp.isBusy() || extendArmSideways.isBusy())) {
+        while (isRunning && (extendArmUp.isBusy() || extendArmSideways.isBusy()))
+        {
+            //
+            if (Stop) break;
+
             // Do nothing
-            Moving = true;
-            if (GP2.x) {
+            if (MoveGripper) {
+
+                gripper.setPower(-1);
+                gripper2.setPower(1);
+
+
+            }
+
+            // stop grippers and exit loop if we see a block
+            if (hasBlock())
+            {
+                MoveGripper = false;
+                gripper.setPower(0);
+                gripper2.setPower(0);
                 break;
             }
         }
+
         extendArmUp.setPower(0);
-        //liftArm.setPower(0);
         extendArmSideways.setPower(0);
         Moving = false;
+        if (myStopWatch.time() > 3)
+        {
+            Stop = true;
+        }
     }
 
     class TelemData {
@@ -100,7 +135,8 @@ public class EncoderMacrosForOdoAuto implements Runnable {
     public enum Operation {
         None,
         MoveArmIn,
-        MoveArmUp;
+        MoveArmUp,
+        MoveArmOut,
     }
 
     private volatile Operation _operation = Operation.None;
@@ -128,6 +164,56 @@ public class EncoderMacrosForOdoAuto implements Runnable {
 
         _operation = operation;
         return true;
+    }
+    public void MoveArmOut()
+    {
+        extendArmUp.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extendArmSideways.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm(0,100,1);
+        extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        OrientServo.setPosition(0);
+        LevelServo.setPosition(0);
+        MoveGripper = true;
+        while(MoveGripper)
+        {
+            if (hasBlock())
+            {
+                MoveGripper = false;
+                gripper.setPower(0);
+                gripper2.setPower(0);
+                extendArmSideways.setPower(0);
+                break;
+            }
+            else  {
+
+                gripper.setPower(-1);
+                gripper2.setPower(1);
+                extendArmSideways.setPower(1);
+
+
+            }
+
+
+        }
+
+
+
+    }
+
+    public void MoveArmUp()
+    {
+        extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        DumpArm.setPower(-0.3);
+        myStopWatch.reset();
+        while (myStopWatch.time() < 3)
+    {
+        extendArmUp.setPower(1);
+    }
+        extendArmUp.setPower(0);
+        DumpArm.setPower(0);
     }
 
     public void MoveArmIn() {
@@ -176,7 +262,11 @@ public class EncoderMacrosForOdoAuto implements Runnable {
                     _operation = Operation.None;
                     break;
                 case MoveArmUp:
-                    extendArmSideways.setPower(-1);
+                   MoveArmUp();
+                    _operation = Operation.None;
+                    break;
+                case MoveArmOut:
+                    MoveArmOut();
                     _operation = Operation.None;
                     break;
                 case None:
@@ -185,7 +275,16 @@ public class EncoderMacrosForOdoAuto implements Runnable {
             }
         }
     }
-           /*
+
+    public void stop() {
+        isRunning = false;
+    }
+}
+
+
+//**********************************************************
+
+   /*
 
             if (GP2.y) {
                 OrientServo.setPosition(1);
@@ -254,13 +353,8 @@ public class EncoderMacrosForOdoAuto implements Runnable {
 
 */
 
-    //BackLeft.setTargetPosition((int) 0.5);
+//BackLeft.setTargetPosition((int) 0.5);
 
 
-    // Stop running
+// Stop running
 
-
-    public void stop() {
-        isRunning = false;
-    }
-}

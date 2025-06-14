@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 //import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -80,7 +81,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
                 hardwareMap.get(Servo.class, "LevelServo"),
                 hardwareMap.get(CRServo.class, "gripper"),
                 hardwareMap.get(CRServo.class, "gripper2"),
-                hardwareMap.get(ColorSensor.class, "Color"),
+                hardwareMap.get(ColorRangeSensor.class, "Color"),
                 hardwareMap.get(DcMotor.class, "DumpArm"),
                 hardwareMap.get(TouchSensor.class, "touch"),
                 hardwareMap.get(DcMotor.class, "climbArm"));

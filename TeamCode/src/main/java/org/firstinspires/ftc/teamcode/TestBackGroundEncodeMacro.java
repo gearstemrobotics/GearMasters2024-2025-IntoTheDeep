@@ -34,6 +34,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
     private int liftPos;
     private int anglePos;
     public boolean Moving = false;
+    private boolean DoY = false;
 
     //All motors
     public TestBackGroundEncodeMacro(Gamepad gamepad2, Gamepad gamepad1, DcMotor AngleArm, DcMotor ExtendArm,
@@ -116,7 +117,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
             // to-do add rest of motors
 
 // Do the work
-            /*
+
             int Red;
             int Blue;
             int Green;
@@ -125,7 +126,9 @@ public class TestBackGroundEncodeMacro implements Runnable {
             Blue = color.blue();
             Green = color.green();
 
-             */
+
+
+
 
             //go down grab macro
            // if (GP2.x)
@@ -137,7 +140,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
            // }
 
             //go back up dispense and bring up macro
-            if (GP2.y)
+            if (GP2.y||DoY)
             {
                 OrientServo.setPosition(1);
                 LevelServo.setPosition(1);
@@ -164,6 +167,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
                         _telemData = "touch sensor pressed = " + touch.isPressed();
                         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         extendArmUp.setPower(-1);
+                        DoY = false;
                         if (GP2.x || touched) {
                             break;
                         }
@@ -191,8 +195,9 @@ public class TestBackGroundEncodeMacro implements Runnable {
                 arm(1000, 0, 0, 1);
 
                 */
-                gripper.setPower(0);
-                gripper2.setPower(0);
+               // gripper.setPower(0);
+               // gripper2.setPower(0);
+              //  arm(1000, 0, 1);
                 //DumpArm.setPower(0.3);
                // arm(5 ,2,1);
                 // DumpArm.setPower(0);
@@ -231,8 +236,14 @@ public class TestBackGroundEncodeMacro implements Runnable {
                }
 
                  */
+               if (Red > 300 && Green > 170 && Blue > 100 || Red > 70 && Green > 140 && Blue > 340)
+                   {
+                        DoY = true;
 
-               if (GP2.left_trigger > 0) {
+                       gripper2.setPower(0);
+                       gripper.setPower(0);
+                   }
+               else if (GP2.left_trigger > 0) {
                    gripper2.setPower(-1);
                    gripper.setPower(1);
                } else if (GP2.right_trigger > 0) {
