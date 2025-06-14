@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.Range;
@@ -34,11 +35,11 @@ public abstract class BaseOdoAuto extends LinearOpMode {
     protected DcMotor FrontRight;
     protected DcMotor FrontLeft;
     protected DcMotor BackRight;
-    protected DcMotor extendArmUp;
-    protected DcMotor extendArmSideways;
-    protected DcMotor DumpArm;
-    protected CRServo gripper2;
-    protected CRServo gripper;
+    //protected DcMotor extendArmUp;
+    //protected DcMotor extendArmSideways;
+    //protected DcMotor DumpArm;
+    //protected CRServo gripper2;
+    //protected CRServo gripper;
 
     double oldTime = 0;
     int anglePos;
@@ -50,6 +51,8 @@ public abstract class BaseOdoAuto extends LinearOpMode {
     int RightArmPos;
     int FrontLeftPos;
     int BackLeftPos;
+
+    protected EncoderMacrosForOdoAuto EncoderMacrosForOdoAutoTask;
 
 
     // int gripper2Pos;
@@ -67,6 +70,23 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
         // gripper2Pos = 0;
 
+    }
+    public void ThreadMaker()
+    {
+        EncoderMacrosForOdoAutoTask = new EncoderMacrosForOdoAuto(
+                hardwareMap.get(DcMotor.class, "extendArmSideways"),
+                hardwareMap.get(DcMotor.class, "extendArmUp"),
+                hardwareMap.get(Servo.class, "OrientServo"),
+                hardwareMap.get(Servo.class, "LevelServo"),
+                hardwareMap.get(CRServo.class, "gripper"),
+                hardwareMap.get(CRServo.class, "gripper2"),
+                hardwareMap.get(ColorSensor.class, "Color"),
+                hardwareMap.get(DcMotor.class, "DumpArm"),
+                hardwareMap.get(TouchSensor.class, "touch"),
+                hardwareMap.get(DcMotor.class, "climbArm"));
+
+        Thread t2 = new Thread(EncoderMacrosForOdoAutoTask, "t2");
+        t2.start();
     }
 
     public void Home()
@@ -93,7 +113,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
 
 
-
+/*
 
 
     //arm encoder stuff
@@ -218,12 +238,14 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
         RunInit();
         navigation.init(hardwareMap, telemetry);
+        ThreadMaker();
 
         waitForStart();
         if (opModeIsActive()) {
             PrepMotor();
             RunOpModeInnerLoop();
         }
+        EncoderMacrosForOdoAutoTask.stop();
     }
 
     protected void Map() {
@@ -232,11 +254,11 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         FrontRight = hardwareMap.get(DcMotor.class, "FrontRight");
         FrontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
         BackRight = hardwareMap.get(DcMotor.class, "BackRight");
-        extendArmUp = hardwareMap.get(DcMotor.class, "extendArmUp");
-        extendArmSideways = hardwareMap.get(DcMotor.class, "extendArmSideways");
-        DumpArm = hardwareMap.get(DcMotor.class, "DumpArm");
-        gripper2 = hardwareMap.get(CRServo.class, "gripper2");
-        gripper = hardwareMap.get(CRServo.class, "gripper");
+       // extendArmUp = hardwareMap.get(DcMotor.class, "extendArmUp");
+      //  extendArmSideways = hardwareMap.get(DcMotor.class, "extendArmSideways");
+       // DumpArm = hardwareMap.get(DcMotor.class, "DumpArm");
+       // gripper2 = hardwareMap.get(CRServo.class, "gripper2");
+       // gripper = hardwareMap.get(CRServo.class, "gripper");
         //blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         webcamName = hardwareMap.get(WebcamName.class, "Webcam");
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
@@ -250,10 +272,10 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.FORWARD);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
-        extendArmSideways.setDirection(DcMotorSimple.Direction.REVERSE);
-        extendArmUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendArmSideways.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DumpArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //extendArmSideways.setDirection(DcMotorSimple.Direction.REVERSE);
+        //extendArmUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //extendArmSideways.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //DumpArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -262,9 +284,9 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        extendArmUp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        extendArmSideways.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        DumpArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+       // extendArmUp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+       // extendArmSideways.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+       // DumpArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 /*
         odo.setOffsets(-55.0, 50.0, DistanceUnit.MM);
