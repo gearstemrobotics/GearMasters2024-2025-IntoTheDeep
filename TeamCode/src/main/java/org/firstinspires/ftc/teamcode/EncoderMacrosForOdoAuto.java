@@ -25,24 +25,16 @@ public class EncoderMacrosForOdoAuto implements Runnable {
     private CRServo gripper2;
     private Servo OrientServo;
     private Servo LevelServo;
-    //private DcMotor liftArm;
 
     private DcMotor climbArm;
     private DcMotor DumpArm;
     private DcMotor extendArmUp;
     private DcMotor extendArmSideways;
-   // private Gamepad GP;
-   // private Gamepad GP2;
     private ColorRangeSensor color;
 
     private int extendPos;
-    private int liftPos;
     private int anglePos;
-    public boolean Moving = false;
-    private boolean MoveGripper = false;
     private static ElapsedTime myStopWatch = new ElapsedTime();
-
-   private boolean Stop = false;
 
     public EncoderMacrosForOdoAuto(DcMotor ExtendArmSideways, DcMotor ExtendArmUp,
                                    Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, ColorRangeSensor Color,
@@ -70,54 +62,23 @@ public class EncoderMacrosForOdoAuto implements Runnable {
     }
 
     public void arm(double ExtendArmUpTarget, double ExtendArmSidewaysTarget, double Speed) {
-        //  extendArmSideways.setDirection(DcMotorSimple.Direction.REVERSE);
         extendArmUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //DumpArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Moving = true;
         anglePos += ExtendArmUpTarget;
         extendPos += ExtendArmSidewaysTarget;
-        // liftPos += LiftArmTarget;
         extendArmUp.setTargetPosition(anglePos);
-        //liftArm.setTargetPosition(liftPos);
         extendArmSideways.setTargetPosition(extendPos);
         extendArmUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         extendArmUp.setPower(Speed);
-        //liftArm.setPower(Speed);
         extendArmSideways.setPower(Speed);
+
         while (isRunning && (extendArmUp.isBusy() || extendArmSideways.isBusy()))
         {
-            //
-            if (Stop) break;
-
-            // Do nothing
-            if (MoveGripper) {
-
-                gripper.setPower(-1);
-                gripper2.setPower(1);
-
-
-            }
-
-            // stop grippers and exit loop if we see a block
-            if (hasBlock())
-            {
-                MoveGripper = false;
-                gripper.setPower(0);
-                gripper2.setPower(0);
-                break;
-            }
         }
 
         extendArmUp.setPower(0);
         extendArmSideways.setPower(0);
-        Moving = false;
-        if (myStopWatch.time() > 3)
-        {
-            Stop = true;
-        }
     }
 
     class TelemData {
@@ -165,6 +126,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         _operation = operation;
         return true;
     }
+
     public void MoveArmOut()
     {
         extendArmUp.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -174,31 +136,23 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         OrientServo.setPosition(0);
         LevelServo.setPosition(0);
-        MoveGripper = true;
-        while(MoveGripper)
+
+        while(true)
         {
             if (hasBlock())
             {
-                MoveGripper = false;
                 gripper.setPower(0);
                 gripper2.setPower(0);
                 extendArmSideways.setPower(0);
                 break;
             }
-            else  {
-
+            else
+            {
                 gripper.setPower(-1);
                 gripper2.setPower(1);
                 extendArmSideways.setPower(1);
-
-
             }
-
-
         }
-
-
-
     }
 
     public void MoveArmUp()
@@ -208,12 +162,23 @@ public class EncoderMacrosForOdoAuto implements Runnable {
 
         DumpArm.setPower(-0.3);
         myStopWatch.reset();
-        while (myStopWatch.time() < 3)
-    {
-        extendArmUp.setPower(1);
-    }
+
+        while (myStopWatch.seconds() < 3.0)
+        {
+            extendArmUp.setPower(1);
+        }
+
         extendArmUp.setPower(0);
         DumpArm.setPower(0);
+    }
+
+    public boolean isTouched()
+    {
+        if (touch.isPressed()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void MoveArmIn() {
@@ -223,33 +188,21 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         OrientServo.setPosition(1);
         LevelServo.setPosition(1);
         //_telemData = "starting extend arm";
-        boolean touched;
-        if (touch.isPressed()) {
-            touched = true;
-        } else {
-            touched = false;
-        }
-        if (!touched) {
-            while (isRunning && !touched) {
-                if (touch.isPressed()) {
-                    touched = true;
-                } else {
-                    touched = false;
-                    extendArmSideways.setPower(-1);
-                    extendArmUp.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                }
-            }
-            gripper.setPower(1);
-            gripper2.setPower(-1);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-
-            gripper.setPower(0);
-            gripper2.setPower(0);
+        // move arm in until touch sensor is reached
+        while (isRunning && !isTouched())
+        {
+            extendArmSideways.setPower(-1);
         }
+
+        gripper.setPower(1);
+        gripper2.setPower(-1);
+
+        // sleep for a second
+        try { Thread.sleep(1000); } catch (InterruptedException ignored) { }
+
+        gripper.setPower(0);
+        gripper2.setPower(0);
     }
 
     @Override
