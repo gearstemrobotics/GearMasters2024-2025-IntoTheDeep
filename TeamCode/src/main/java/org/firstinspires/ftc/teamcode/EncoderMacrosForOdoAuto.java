@@ -129,7 +129,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
     public void MoveArmOut() {
         extendArmUp.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm(0, 100, 1);
+       // arm(0, 100, 1);
         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         OrientServo.setPosition(0);
