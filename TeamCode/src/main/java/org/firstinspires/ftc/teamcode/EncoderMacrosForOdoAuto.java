@@ -149,6 +149,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         }
     }
 
+
     public void MoveArmDown() {
         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         myStopWatch.reset();
