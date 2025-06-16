@@ -84,6 +84,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
                 hardwareMap.get(ColorRangeSensor.class, "Color"),
                 hardwareMap.get(DcMotor.class, "DumpArm"),
                 hardwareMap.get(TouchSensor.class, "touch"),
+                hardwareMap.get(TouchSensor.class, "touch2"),
                 hardwareMap.get(DcMotor.class, "climbArm"));
 
         Thread t2 = new Thread(EncoderMacrosForOdoAutoTask, "t2");

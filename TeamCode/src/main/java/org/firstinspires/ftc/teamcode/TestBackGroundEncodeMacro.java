@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class TestBackGroundEncodeMacro implements Runnable {
     private boolean isRunning = true;
@@ -28,7 +30,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
     private DcMotor extendArmSideways;
     private Gamepad GP;
     private Gamepad GP2;
-    private ColorSensor color;
+    private ColorRangeSensor color;
 
     private int extendPos;
     private int liftPos;
@@ -38,7 +40,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
     //All motors
     public TestBackGroundEncodeMacro(Gamepad gamepad2, Gamepad gamepad1, DcMotor AngleArm, DcMotor ExtendArm,
-                                     Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, ColorSensor Color,
+                                     Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, ColorRangeSensor Color,
                                      DcMotor dumpArm, TouchSensor Touch, boolean moving, DcMotor ClimbArm) {
         Moving = moving;
         GP2 = gamepad2;
@@ -236,7 +238,8 @@ public class TestBackGroundEncodeMacro implements Runnable {
                }
 
                  */
-               if (Red > 300 && Green > 170 && Blue > 100 || Red > 70 && Green > 140 && Blue > 340)
+               double Distance = color.getDistance(DistanceUnit.MM);
+               if (Distance < 27)
                    {
                         DoY = true;
 

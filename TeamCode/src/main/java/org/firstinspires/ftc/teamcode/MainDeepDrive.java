@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -47,7 +48,7 @@ public class MainDeepDrive extends LinearOpMode {
                 hardwareMap.get(Servo.class, "LevelServo"),
                 hardwareMap.get(CRServo.class, "gripper"),
                 hardwareMap.get(CRServo.class, "gripper2"),
-                hardwareMap.get(ColorSensor.class, "Color"),
+                hardwareMap.get(ColorRangeSensor.class, "Color"),
                 hardwareMap.get(DcMotor.class, "DumpArm"),
                 hardwareMap.get(TouchSensor.class, "touch"),
                 Moving,

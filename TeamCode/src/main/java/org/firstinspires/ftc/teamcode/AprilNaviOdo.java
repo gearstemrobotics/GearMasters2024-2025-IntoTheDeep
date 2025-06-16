@@ -154,14 +154,14 @@ public class AprilNaviOdo {
             }
 
             for (int i = 0; i < 10; i++) {
-                baseOdoAuto.drive(-hex_motor_ticks * 2, -hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.1);
+                baseOdoAuto.drive(hex_motor_ticks * 2, hex_motor_ticks * 2, -hex_motor_ticks * 2, -hex_motor_ticks * 2, 0.1);
                 if (cameraMonitor.GetPose() != null) {
                     return;
                 }
             }
 
             for (int i = 0; i < 20; i++) {
-                baseOdoAuto.drive(hex_motor_ticks * 2, hex_motor_ticks * 2, -hex_motor_ticks * 2, -hex_motor_ticks * 2, 0.1);
+                baseOdoAuto.drive(-hex_motor_ticks * 2, -hex_motor_ticks * 2, hex_motor_ticks * 2, hex_motor_ticks * 2, 0.1);
                 if (cameraMonitor.GetPose() != null) {
                     return;
                 }

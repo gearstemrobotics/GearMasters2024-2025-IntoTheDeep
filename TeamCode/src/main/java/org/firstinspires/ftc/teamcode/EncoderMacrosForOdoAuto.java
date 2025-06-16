@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 public class EncoderMacrosForOdoAuto implements Runnable {
@@ -21,6 +22,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
     private boolean isRunning = true;
 
     private TouchSensor touch;
+    private TouchSensor touch2;
     private CRServo gripper;
     private CRServo gripper2;
     private Servo OrientServo;
@@ -38,7 +40,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
 
     public EncoderMacrosForOdoAuto(DcMotor ExtendArmSideways, DcMotor ExtendArmUp,
                                    Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, ColorRangeSensor Color,
-                                   DcMotor dumpArm, TouchSensor Touch, DcMotor ClimbArm) {
+                                   DcMotor dumpArm, TouchSensor Touch, TouchSensor Touch2, DcMotor ClimbArm) {
         extendArmSideways = ExtendArmSideways;
         extendArmUp = ExtendArmUp;
         OrientServo = orientServo;
@@ -47,6 +49,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         gripper2 = Gripper2;
         color = Color;
         DumpArm = dumpArm;
+        touch2 = Touch2;
         touch = Touch;
         climbArm = ClimbArm;
 
@@ -56,8 +59,9 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         int Green = color.green();
         int Blue = color.blue();
         int Red = color.red();
-
-        return (Red > 300 && Green > 170 && Blue > 100);// || Red > 15 && Green > 160 && Blue > 150)
+        double Distance = color.getDistance(DistanceUnit.MM);
+        return (Distance < 27);
+       // return (Red > 300 && Green > 170 && Blue > 100);// || Red > 15 && Green > 160 && Blue > 150)
     }
 
     public void arm(double ExtendArmUpTarget, double ExtendArmSidewaysTarget, double Speed) {
@@ -144,7 +148,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
             } else {
                 gripper.setPower(-1);
                 gripper2.setPower(1);
-                extendArmSideways.setPower(1);
+                extendArmSideways.setPower(0.5);
             }
         }
     }
@@ -153,9 +157,14 @@ public class EncoderMacrosForOdoAuto implements Runnable {
     public void MoveArmDown() {
         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         myStopWatch.reset();
-        while (myStopWatch.seconds() < 3) {
-            DumpArm.setPower(-0.3);
+        boolean touchy = false;
+        while (!touchy) {
+              DumpArm.setPower(-0.35);
             extendArmUp.setPower(-1);
+            if (touch2.isPressed())
+            {
+                touchy = true;
+            }
         }
         DumpArm.setPower(0);
         extendArmUp.setPower(0);
@@ -165,11 +174,16 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        DumpArm.setPower(-0.3);
+       // DumpArm.setPower(0.26 );
         myStopWatch.reset();
 
-        while (myStopWatch.seconds() < 3.0) {
+        while (myStopWatch.seconds() < 2.4) {
             extendArmUp.setPower(1);
+        }
+
+        while(myStopWatch.seconds() < 3.3)
+        {
+            DumpArm.setPower(0.6 );
         }
 
         extendArmUp.setPower(0);
