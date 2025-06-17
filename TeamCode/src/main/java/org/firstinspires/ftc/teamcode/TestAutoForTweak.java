@@ -47,6 +47,7 @@ public class TestAutoForTweak extends BaseOdoAuto{
         macro.CompleteOperation();
         //navigation.resetPosition();
         //move(7,-20,0);
+
         move(0,0,90);
         //navigation.resetPosition();
         macro.DoOperation(Operation.MoveArmUp);
