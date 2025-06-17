@@ -25,7 +25,7 @@ public class TestAutoForTweak extends BaseOdoAuto{
         macro.CompleteOperation();
 
         //navigation.resetPosition();
-        Home(12);
+        //Home(12);
         macro.DoOperation(Operation.MoveArmOut);
         macro.CompleteOperation();
         macro.DoOperation(Operation.MoveArmIn);
@@ -34,7 +34,27 @@ public class TestAutoForTweak extends BaseOdoAuto{
         macro.DoOperation(Operation.MoveArmUp);
         macro.CompleteOperation();
         macro.DoOperation(Operation.MoveArmDown);
+        move(-10,0,-90);
+
+        navigation.resetPosition();
+        move(18,7,0);
         macro.CompleteOperation();
+        macro.DoOperation(Operation.MoveArmOut);
+        macro.CompleteOperation();
+        macro.DoOperation(Operation.MoveArmIn);
+        move(0,0,0);
+        //move(18,7,90);
+        macro.CompleteOperation();
+        //navigation.resetPosition();
+        //move(7,-20,0);
+        move(0,0,90);
+        //navigation.resetPosition();
+        macro.DoOperation(Operation.MoveArmUp);
+        move(0,0,90);
+        move(0,-2,90);
+        macro.CompleteOperation();
+
+
 
 
         //macro.DoOperation(Operation.MoveArmIn);

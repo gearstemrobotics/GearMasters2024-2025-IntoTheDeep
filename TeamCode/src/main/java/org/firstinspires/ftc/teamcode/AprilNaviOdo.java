@@ -439,9 +439,9 @@ public class AprilNaviOdo {
         double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
         // OSCILLATION FIX 2: Replace "oomph" with smart minimum power
-        final double MIN_DRIVE_POWER = 0.100; // Minimum power to overcome robot weight
+        final double MIN_DRIVE_POWER = 0.095; // Minimum power to overcome robot weight
         final double MIN_STRAFE_POWER = 0.078 ; // Minimum power to overcome robot weight
-        final double MIN_TURN_POWER = 0.072; // Minimum power to overcome robot weight
+        final double MIN_TURN_POWER = 0.070; // Minimum power to overcome robot weight
 
         if (Math.abs(drive) > 0 && Math.abs(drive) < MIN_DRIVE_POWER) {
             drive = drive > 0 ? MIN_DRIVE_POWER : -MIN_DRIVE_POWER;
