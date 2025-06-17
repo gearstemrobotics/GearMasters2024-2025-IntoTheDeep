@@ -55,6 +55,8 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
     protected EncoderMacrosForOdoAuto EncoderMacrosForOdoAutoTask;
 
+   protected AprilNaviOdo aprilNaviOdo;  //= new AprilNaviOdo(this);
+
 
     // int gripper2Pos;
 
@@ -91,10 +93,10 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         t2.start();
     }
 
-    public void Home()
+    public void Home(double distanceFromTarget)
     {
-        AprilNaviOdo aprilNaviOdo = new AprilNaviOdo(this);
-        aprilNaviOdo.Home(14);
+
+        aprilNaviOdo.Home(distanceFromTarget);
     }
 
 
@@ -105,6 +107,12 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         FrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontRight.setDirection(DcMotor.Direction.FORWARD);
+        BackRight.setDirection(DcMotor.Direction.REVERSE);
 
         while (opModeIsActive() && !navigation.moveUntilPositioned(x, y, heading)) {
             telemetry.update();
@@ -192,7 +200,6 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
     protected void drive(double FrontRightTarget, double BackRightTarget,
                          double FrontLeftTarget, double BackLeftTarget, double Speed) {
-
         FrontLeft.setDirection(DcMotor.Direction.REVERSE);
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -240,6 +247,7 @@ public abstract class BaseOdoAuto extends LinearOpMode {
 
         RunInit();
         navigation.init(hardwareMap, telemetry);
+        aprilNaviOdo = new AprilNaviOdo(this);
         ThreadMaker();
 
         waitForStart();

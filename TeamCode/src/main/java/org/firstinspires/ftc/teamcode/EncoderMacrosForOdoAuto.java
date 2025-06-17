@@ -148,7 +148,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
             } else {
                 gripper.setPower(-1);
                 gripper2.setPower(1);
-                extendArmSideways.setPower(0.5);
+                extendArmSideways.setPower(0.35);
             }
         }
     }
@@ -168,6 +168,8 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         }
         DumpArm.setPower(0);
         extendArmUp.setPower(0);
+        OrientServo.setPosition(0);
+        LevelServo.setPosition(0);
     }
 
     public void MoveArmUp() {
@@ -177,11 +179,11 @@ public class EncoderMacrosForOdoAuto implements Runnable {
        // DumpArm.setPower(0.26 );
         myStopWatch.reset();
 
-        while (myStopWatch.seconds() < 2.4) {
+        while (myStopWatch.seconds() < 2) {
             extendArmUp.setPower(1);
         }
 
-        while(myStopWatch.seconds() < 3.3)
+        while(myStopWatch.seconds() < 2.5)
         {
             DumpArm.setPower(0.6 );
         }
@@ -213,6 +215,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
 
         gripper.setPower(1);
         gripper2.setPower(-1);
+        extendArmSideways.setPower(0);
 
         // sleep for a second
         try {

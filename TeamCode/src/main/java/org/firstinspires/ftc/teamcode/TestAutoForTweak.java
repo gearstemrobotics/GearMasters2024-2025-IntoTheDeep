@@ -13,13 +13,30 @@ public class TestAutoForTweak extends BaseOdoAuto{
         double Tick = 100;
 
         // begin the move arm in operation
+
         macro.DoOperation(Operation.MoveArmUp);
         move(-10,0,0);
         macro.CompleteOperation();
+
         macro.DoOperation(Operation.MoveArmDown);
-        move(-10,0,-45);
+        move(-10,20,0);
+        //navigation.resetPosition();
+        move(-10,20,-90);
         macro.CompleteOperation();
-        Home();
+
+        //navigation.resetPosition();
+        Home(12);
+        macro.DoOperation(Operation.MoveArmOut);
+        macro.CompleteOperation();
+        macro.DoOperation(Operation.MoveArmIn);
+        move(-10,0,0);
+        macro.CompleteOperation();
+        macro.DoOperation(Operation.MoveArmUp);
+        macro.CompleteOperation();
+        macro.DoOperation(Operation.MoveArmDown);
+        macro.CompleteOperation();
+
+
         //macro.DoOperation(Operation.MoveArmIn);
         //macro.CompleteOperation();
         // give the arm some time to get out of the way before we move

@@ -68,8 +68,16 @@ public class AprilNaviOdo {
             if (cameraMonitor.IsReady()) {
                 //AprilTagHoming();
                 if (state == HomingState.WaitForCamera) {
-                    Sleep(2000);
-                    state = HomingState.ScanForTag;
+                    // delay if we dont have a tag yet
+                    if (cameraMonitor.GetPose() == null)
+                    {
+                        Sleep(2000);
+                        state = HomingState.ScanForTag;
+                    }
+                    else
+                    {
+                        state = HomingState.FtcOmniDrive;
+                    }
                 } else if (state == HomingState.ScanForTag) {
                     scanForTag();
                     // wait a bit to make sure tag refreshes
@@ -80,6 +88,7 @@ public class AprilNaviOdo {
                         state = HomingState.HeadToTag;
                     }
                 } else if (state == HomingState.HeadToTag) {
+
                     GoToAprilTag();
                     if (cameraMonitor.GetRange() < rangeGoalSet || Math.abs(cameraMonitor.GetYaw()) > 55) {
                         state = HomingState.FtcOmniDrive;//HomingState.CenterOnTag;
@@ -349,6 +358,22 @@ public class AprilNaviOdo {
                 range = 50;
             }
 
+
+            baseOdoAuto.BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            baseOdoAuto.BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            baseOdoAuto.FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            baseOdoAuto.FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            baseOdoAuto.FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            baseOdoAuto.FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            baseOdoAuto.BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            baseOdoAuto.BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            baseOdoAuto.FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+            baseOdoAuto.BackLeft.setDirection(DcMotor.Direction.REVERSE);
+            baseOdoAuto.FrontRight.setDirection(DcMotor.Direction.FORWARD);
+            baseOdoAuto.BackRight.setDirection(DcMotor.Direction.REVERSE);
+
             double bearing = pose.bearing;
             int hex_motor_ticks = 288;
             int turn = (int) (bearing * -13.5);
@@ -414,16 +439,18 @@ public class AprilNaviOdo {
         double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
         // OSCILLATION FIX 2: Replace "oomph" with smart minimum power
-        final double MIN_POWER = 0.10; // Minimum power to overcome robot weight
+        final double MIN_DRIVE_POWER = 0.100; // Minimum power to overcome robot weight
+        final double MIN_STRAFE_POWER = 0.078 ; // Minimum power to overcome robot weight
+        final double MIN_TURN_POWER = 0.072; // Minimum power to overcome robot weight
 
-        if (Math.abs(drive) > 0 && Math.abs(drive) < MIN_POWER) {
-            drive = drive > 0 ? MIN_POWER : -MIN_POWER;
+        if (Math.abs(drive) > 0 && Math.abs(drive) < MIN_DRIVE_POWER) {
+            drive = drive > 0 ? MIN_DRIVE_POWER : -MIN_DRIVE_POWER;
         }
-        if (Math.abs(strafe) > 0 && Math.abs(strafe) < MIN_POWER) {
-            strafe = strafe > 0 ? MIN_POWER : -MIN_POWER;
+        if (Math.abs(strafe) > 0 && Math.abs(strafe) < MIN_STRAFE_POWER) {
+            strafe = strafe > 0 ? MIN_STRAFE_POWER : -MIN_STRAFE_POWER;
         }
-        if (Math.abs(turn) > 0 && Math.abs(turn) < MIN_POWER) {
-            turn = turn > 0 ? MIN_POWER : -MIN_POWER;
+        if (Math.abs(turn) > 0 && Math.abs(turn) < MIN_TURN_POWER) {
+            turn = turn > 0 ? MIN_TURN_POWER : -MIN_TURN_POWER;
         }
 
         baseOdoAuto.telemetry.addData("drive", drive);
