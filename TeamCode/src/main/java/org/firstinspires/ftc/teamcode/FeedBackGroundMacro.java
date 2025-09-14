@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class TestBackGroundEncodeMacro implements Runnable {
+public class FeedBackGroundMacro implements Runnable {
     private boolean isRunning = true;
 
     private TouchSensor touch;
@@ -41,13 +41,13 @@ public class TestBackGroundEncodeMacro implements Runnable {
     private static ElapsedTime myStopWatch = new ElapsedTime();
 
     //All motors
-    public TestBackGroundEncodeMacro(Gamepad gamepad2, Gamepad gamepad1, DcMotor AngleArm, DcMotor ExtendArm,
+    public FeedBackGroundMacro(Gamepad gamepad2, Gamepad gamepad1, DcMotor AngleArm, DcMotor ExtendArm,
                                      Servo orientServo, Servo levelServo, CRServo Gripper, CRServo Gripper2, ColorRangeSensor Color,
                                      DcMotor dumpArm, TouchSensor Touch,TouchSensor Touch2, boolean moving, DcMotor ClimbArm) {
         Moving = moving;
         GP2 = gamepad2;
         GP = gamepad1;
-       // liftArm = LiftArm;
+        // liftArm = LiftArm;
         extendArmUp = AngleArm;
         extendArmSideways = ExtendArm;
         OrientServo = orientServo;
@@ -64,19 +64,19 @@ public class TestBackGroundEncodeMacro implements Runnable {
     }
 
     public void arm(double ExtendArmUpTarget, double ExtendArmSidewaysTarget, double Speed) {
-      //  extendArmSideways.setDirection(DcMotorSimple.Direction.REVERSE);
+        //  extendArmSideways.setDirection(DcMotorSimple.Direction.REVERSE);
         extendArmUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //DumpArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Moving = true;
         anglePos += ExtendArmUpTarget;
         extendPos += ExtendArmSidewaysTarget;
-       // liftPos += LiftArmTarget;
+        // liftPos += LiftArmTarget;
         extendArmUp.setTargetPosition(anglePos);
         //liftArm.setTargetPosition(liftPos);
         extendArmSideways.setTargetPosition(extendPos);
         extendArmUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-       // liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         extendArmUp.setPower(Speed);
         //liftArm.setPower(Speed);
@@ -118,7 +118,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
         while (isRunning) {
             extendArmUp.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             extendArmSideways.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-           // liftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // liftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             // to-do add rest of motors
 
 // Do the work
@@ -136,13 +136,13 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
 
             //go down grab macro
-           // if (GP2.x)
+            // if (GP2.x)
             //{
 
-              //  arm(0, 100, 0, 1);
-               // OrientServo.setPosition(1);
-                //LevelServo.setPosition(1);
-           // }
+            //  arm(0, 100, 0, 1);
+            // OrientServo.setPosition(1);
+            //LevelServo.setPosition(1);
+            // }
 /*
             if (GP2.a)
             {
@@ -166,7 +166,7 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
  */
             //go back up dispense and bring up macro
-            if (GP2.y||DoY)
+            if (GP2.y)
             {
                 myStopWatch.reset();
                 OrientServo.setPosition(1);
@@ -227,13 +227,13 @@ public class TestBackGroundEncodeMacro implements Runnable {
                 arm(1000, 0, 0, 1);
 
                 */
-               // gripper.setPower(0);
-               // gripper2.setPower(0);
-              //  arm(1000, 0, 1);
+                // gripper.setPower(0);
+                // gripper2.setPower(0);
+                //  arm(1000, 0, 1);
                 //DumpArm.setPower(0.3);
-               // arm(5 ,2,1);
+                // arm(5 ,2,1);
                 // DumpArm.setPower(0);
-              //  arm(8,0,1);
+                //  arm(8,0,1);
 
             }
 
@@ -251,11 +251,11 @@ public class TestBackGroundEncodeMacro implements Runnable {
             }
 
              */
-           else
-           {
-              // liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-               extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-               extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            else
+            {
+                // liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
                 /*
                double power2;
@@ -268,25 +268,29 @@ public class TestBackGroundEncodeMacro implements Runnable {
                }
 
                  */
-               double Distance = color.getDistance(DistanceUnit.MM);
-               if (Distance < 27)
-                   {
-                       myStopWatch.reset();
-                       while(myStopWatch.seconds() < 0.01 )
-                       {
-                           // do nothing
-                       }
-                        DoY = true;
+               // double Distance = color.getDistance(DistanceUnit.MM);
+                /*
+                if (Distance < 27)
+                {
+                    myStopWatch.reset();
+                    while(myStopWatch.seconds() < 0.01 )
+                    {
+                        // do nothing
+                    }
+                    DoY = true;
 
-                      // gripper2.setPower(0);
-                      // gripper.setPower(0);
-                   }
-               else if (GP2.left_trigger > 0) {
-                   gripper2.setPower(-1);
-                   gripper.setPower(1);
-               } else if (GP2.right_trigger > 0) {
-                   gripper2.setPower(1);
-                   gripper.setPower(-1);
+                    gripper2.setPower(0);
+                    gripper.setPower(0);
+
+                 */
+
+                 if (GP2.left_trigger > 0) {
+                    gripper2.setPower(-1);
+                    gripper.setPower(1);
+                } else if (GP2.right_trigger > 0) {
+                    gripper2.setPower(1);
+                    gripper.setPower(-1);}
+
                 /*
                }else if (Red > 440 ) {
                    //&& Green > 230 && Blue > 90) {
@@ -304,33 +308,33 @@ public class TestBackGroundEncodeMacro implements Runnable {
                }
 
                 */
-               }
-               else
-               {
-                   gripper2.setPower(0);
-                   gripper.setPower(0);
-               }
+
+                else
+                {
+                    gripper2.setPower(0);
+                    gripper.setPower(0);
+                }
 
 
-               // liftArm.setPower(power2);
-               if (GP2.dpad_up)
-               {
-                   OrientServo.setPosition(1);
-                   LevelServo.setPosition(1);
-               }
+                // liftArm.setPower(power2);
+                if (GP2.dpad_up)
+                {
+                    OrientServo.setPosition(1);
+                    LevelServo.setPosition(1);
+                }
 
-               if (GP2.dpad_down)
-               {
-                   OrientServo.setPosition(0);
-                   LevelServo.setPosition(0);
-               }
+                if (GP2.dpad_down)
+                {
+                    OrientServo.setPosition(0);
+                    LevelServo.setPosition(0);
+                }
 
 
 
-               //extra arm
-               extendArmUp.setPower(-GP2.right_stick_y);
+                //extra arm
+                extendArmUp.setPower(-GP2.right_stick_y);
 
-               extendArmSideways.setPower(-GP2.left_stick_y);
+                extendArmSideways.setPower(-GP2.left_stick_y);
                /*
                if (GP2.dpad_left)
                {
@@ -348,11 +352,11 @@ public class TestBackGroundEncodeMacro implements Runnable {
 
 
                 */
-               DumpArm.setPower(GP2.right_stick_x * 0.5);
-              // climbArm.setPower(GP2.right_stick_x * 0.5);
+                DumpArm.setPower(GP2.right_stick_x * 0.5);
+                // climbArm.setPower(GP2.right_stick_x * 0.5);
 
 
-           }
+            }
             //BackLeft.setTargetPosition((int) 0.5);
         }
 

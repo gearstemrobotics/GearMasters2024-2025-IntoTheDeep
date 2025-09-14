@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.EncoderMacrosForOdoAuto.Operation;
 @Autonomous(name = "1TestAutoForTweak")
 public class TestAutoForTweak extends BaseOdoAuto{
 
+
     @Override
     public void RunOpModeInnerLoop()
     {
@@ -15,7 +16,7 @@ public class TestAutoForTweak extends BaseOdoAuto{
         // begin the move arm in operation
 
         macro.DoOperation(Operation.MoveArmUp);
-        move(-10,0,0);
+        move(-10,3,0);
         macro.CompleteOperation();
 
         macro.DoOperation(Operation.MoveArmDown);
@@ -29,15 +30,15 @@ public class TestAutoForTweak extends BaseOdoAuto{
         macro.DoOperation(Operation.MoveArmOut);
         macro.CompleteOperation();
         macro.DoOperation(Operation.MoveArmIn);
-        move(-10,0,0);
+        move(-10,3,0);
         macro.CompleteOperation();
         macro.DoOperation(Operation.MoveArmUp);
         macro.CompleteOperation();
         macro.DoOperation(Operation.MoveArmDown);
-        move(-10,0,-90);
+        move(-10,3 ,-90);
 
         navigation.resetPosition();
-        move(18,7,0);
+        move(18,10,0);
         macro.CompleteOperation();
         macro.DoOperation(Operation.MoveArmOut);
         macro.CompleteOperation();

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class EncoderMacrosForOdoAuto implements Runnable {
 
-    private boolean isRunning = true;
+    volatile boolean isRunning = true;
 
     private TouchSensor touch;
     private TouchSensor touch2;
@@ -60,7 +60,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         int Blue = color.blue();
         int Red = color.red();
         double Distance = color.getDistance(DistanceUnit.MM);
-        return (Distance < 27);
+        return (Distance < 40);
        // return (Red > 300 && Green > 170 && Blue > 100);// || Red > 15 && Green > 160 && Blue > 150)
     }
 
@@ -76,7 +76,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         extendArmUp.setPower(Speed);
         extendArmSideways.setPower(Speed);
 
-        while (isRunning && (extendArmUp.isBusy() || extendArmSideways.isBusy())) {
+        while (isRunning&& (extendArmUp.isBusy() || extendArmSideways.isBusy())) {
         }
 
         extendArmUp.setPower(0);
@@ -100,7 +100,8 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         MoveArmIn,
         MoveArmUp,
         MoveArmOut,
-        MoveArmDown
+        MoveArmDown,
+        MoveArmDownSpeci
     }
 
     private volatile Operation _operation = Operation.None;
@@ -110,7 +111,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
     }
 
     public void CompleteOperation() {
-        while (_operation != EncoderMacrosForOdoAuto.Operation.None) {
+        while (_operation != EncoderMacrosForOdoAuto.Operation.None && isRunning) {
             // wait for the operation to end or the program to stop
             if (!isRunning) break;
 
@@ -139,8 +140,9 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         OrientServo.setPosition(0);
         LevelServo.setPosition(0);
 
-        while (true) {
-            if (hasBlock()) {
+        while (isRunning) {
+            myStopWatch.reset();
+            if (hasBlock() && myStopWatch.seconds() > 0.01 ) {
                 gripper.setPower(0);
                 gripper2.setPower(0);
                 extendArmSideways.setPower(0);
@@ -158,7 +160,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         myStopWatch.reset();
         boolean touchy = false;
-        while (!touchy) {
+        while (!touchy && isRunning) {
               DumpArm.setPower(-0.35);
             extendArmUp.setPower(-1);
             if (touch2.isPressed())
@@ -172,6 +174,14 @@ public class EncoderMacrosForOdoAuto implements Runnable {
         LevelServo.setPosition(0);
     }
 
+    public void MoveArmDownSpeci()
+    {
+        myStopWatch.reset();
+        while(myStopWatch.seconds() < 0.8 && isRunning)
+        {
+            extendArmUp.setPower(1);
+        }
+    }
     public void MoveArmUp() {
         extendArmUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendArmSideways.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -179,11 +189,11 @@ public class EncoderMacrosForOdoAuto implements Runnable {
        // DumpArm.setPower(0.26 );
         myStopWatch.reset();
 
-        while (myStopWatch.seconds() < 2) {
+        while (myStopWatch.seconds() < 2 && isRunning) {
             extendArmUp.setPower(1);
         }
 
-        while(myStopWatch.seconds() < 2.5)
+        while(myStopWatch.seconds() < 2.5 && isRunning)
         {
             DumpArm.setPower(0.6 );
         }
@@ -210,7 +220,7 @@ public class EncoderMacrosForOdoAuto implements Runnable {
 
         // move arm in until touch sensor is reached
         while (isRunning && !isTouched()) {
-            extendArmSideways.setPower(-1);
+            extendArmSideways.setPower(-0.9);
         }
 
         gripper.setPower(1);
@@ -248,12 +258,18 @@ public class EncoderMacrosForOdoAuto implements Runnable {
                     MoveArmDown();
                     _operation = Operation.None;
                     break;
+                case MoveArmDownSpeci:
+                    MoveArmDownSpeci();
+                    _operation = Operation.None;
+                    break;
                 case None:
                 default:
                     break;
             }
         }
     }
+
+
 
     public void stop() {
         isRunning = false;

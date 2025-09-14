@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 public class SimpleNavigationSystem {
 
     // Hardware components
+    private boolean isRunning = true;
     private DcMotor frontLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backLeftDrive = null;
@@ -33,7 +34,7 @@ public class SimpleNavigationSystem {
 
     // Power limits
     private final double MAX_POWER = 0.6;
-    private final double MIN_POWER = 0.15;
+    private final double MIN_POWER = 0.1;
 
     private Telemetry telemetry;
     private int stableCycles = 0;
@@ -199,8 +200,8 @@ public class SimpleNavigationSystem {
      * Normalize angle to [-180, 180] range
      */
     private double normalizeAngle(double angle) {
-        while (angle > 180) angle -= 360;
-        while (angle < -180) angle += 360;
+        while (angle > 180 && isRunning) angle -= 360;
+        while (angle < -180 && isRunning) angle += 360;
         return angle;
     }
 
@@ -245,7 +246,13 @@ public class SimpleNavigationSystem {
     /**
      * Stop all motors
      */
+    /*
     public void stop() {
         setDrivePower(0, 0, 0);
+    }
+
+     */
+    public void stop() {
+        isRunning = false;
     }
 }

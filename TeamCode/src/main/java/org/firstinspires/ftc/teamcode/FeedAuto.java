@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
-@TeleOp(name = "1MainDeepDrive")
-public class MainDeepDrive extends LinearOpMode {
+@TeleOp(name = "1zFeedAuto")
+public class FeedAuto extends LinearOpMode {
 
 
     //RevBlinkinLedDriver blinkinLedDriver;
@@ -41,7 +41,7 @@ public class MainDeepDrive extends LinearOpMode {
 
         Thread t1 = new Thread(task, "t1");
 
-        TestBackGroundEncodeMacro task2 = new TestBackGroundEncodeMacro(gamepad2, gamepad1,
+        FeedBackGroundMacro task2 = new FeedBackGroundMacro(gamepad2, gamepad1,
                 hardwareMap.get(DcMotor.class, "extendArmSideways"),
                 hardwareMap.get(DcMotor.class, "extendArmUp"),
                 hardwareMap.get(Servo.class, "OrientServo"),
@@ -107,7 +107,7 @@ public class MainDeepDrive extends LinearOpMode {
                  */
 
                 task2.AddTelemetry(telemetry);
-              //  telemetry.addData("touch=", touch.isPressed());
+                //  telemetry.addData("touch=", touch.isPressed());
                 telemetry.update();
 
 

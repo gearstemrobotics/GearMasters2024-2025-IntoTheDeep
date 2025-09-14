@@ -32,7 +32,7 @@ public class TestColorSensor extends LinearOpMode {
                 telemetry.addData("Red", color.red());
                 telemetry.addData("Green", color.green());
                 telemetry.addData("Blue", color.blue());
-                telemetry.addData("Range", color.getDistance(DistanceUnit.INCH));
+                telemetry.addData("Range", color.getDistance(DistanceUnit.MM));
                 telemetry.addData("IsTouched", touched);
 
                 telemetry.update();

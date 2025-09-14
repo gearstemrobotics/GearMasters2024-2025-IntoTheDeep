@@ -89,8 +89,8 @@ public abstract class BaseOdoAuto extends LinearOpMode {
                 hardwareMap.get(TouchSensor.class, "touch2"),
                 hardwareMap.get(DcMotor.class, "climbArm"));
 
-        Thread t2 = new Thread(EncoderMacrosForOdoAutoTask, "t2");
-        t2.start();
+
+
     }
 
     public void Home(double distanceFromTarget)
@@ -249,13 +249,21 @@ public abstract class BaseOdoAuto extends LinearOpMode {
         navigation.init(hardwareMap, telemetry);
         aprilNaviOdo = new AprilNaviOdo(this);
         ThreadMaker();
+        Thread t2 = new Thread(EncoderMacrosForOdoAutoTask, "t2");
 
         waitForStart();
         if (opModeIsActive()) {
+            t2.start();
             PrepMotor();
             RunOpModeInnerLoop();
         }
         EncoderMacrosForOdoAutoTask.stop();
+      //  t2.interrupt();
+        try {
+            t2.join();
+        } catch (InterruptedException e) {
+         //   throw new RuntimeException(e);
+        }
     }
 
     protected void Map() {
